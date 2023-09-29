@@ -1,0 +1,135 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\usepackage{xepersian}
+\settextfont[Scale=1]{HM FNazli}
+\setlatintextfont[Scale=.9]{Noto Sans}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+
+\title{
+    تمرین شماره سه
+}
+\author{حسین افکار}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+در این تمرین به بررسی بخش مقدمه می‌پردازیم \\
+\begin{latin}
+Computing systems are increasingly moving toward multicore
+platforms and their memory subsystem represents a
+crucial shared resource. As applications become more memory
+intensive and processors include more cores that share the
+same memory system, the performance of main memory
+becomes more critical for overall system performance. \\
+In a multi-core system, the processing time of a memory
+request is highly variable as it depends on the location of the
+access and the state of DRAM chips and the DRAM controller.
+There is inter-core dependency as the memory accesses from
+one core could also be influenced by requests from other
+cores; the DRAM controller commonly employs scheduling
+algorithms to re-order requests in order to maximize overall
+DRAM throughput [16]. All these factors affect the temporal
+predictability of memory intensive real-time applications due
+to the high variance of their memory access time. Therefore,
+there is an increasing need for memory bandwidth management solutions that
+provide Quality of Service (QoS).
+\end{latin}
+در این دو پاراگراف نویسنده سعی کرده است در مورد اهمیت و محوریت موضوع مطالبی را مطرح کند
+همچنین پاراگراف یک و دو در هم تنیده هستند و بخشی از صحبت‌های پاراگراف دو در بخش بعدی که
+مرور متون است نیز کاربرد دارد.
+\begin{latin}
+This problem has already been recognized by many researchers,
+and recent work has focused on designing more
+predictable memory controllers. For example, a reservation
+based approach has been applied to design a DRAM controller
+that supports real-time features [4]. Resource reservation and
+reclaiming techniques [17], [1] have been widely studied by
+the real-time community to solve the problem of assigning
+different fractions of a shared resource in a guaranteed manner
+to contending applications. Proposed techniques have been
+successfully applied to CPU management [10], [7], [6] and
+more recently to GPU management [14], [15].
+\end{latin}
+در این بخش سعی شده است که متون قبلی مرور شوند که در این پاراگراف مولف محور است
+\begin{latin}
+In our previous work, we investigated memory bandwidth
+reservation at the operating system level [21]. \textcolor{red}{However}, our
+existing solution has significant limitations. First of all, it
+assumes a constant available memory bandwidth, which is
+not true in DRAM-based systems. Second, it can not adapt
+to dynamic changes in memory resource usage. Third, while
+the work in [21] provides safe performance guarantees for
+hard real-time tasks, it makes no effort to optimize memory
+throughput for soft real-time tasks, possibly resulting
+in severely reduced system performance. To address these
+limitations and challenges, we propose a new, efficient and
+fine-grained memory bandwidth management system, which
+we call MemGuard.
+\end{latin}
+در  این بخش سعی شده است که شکاف کار‌های موجود نشان داده شود که در آخر
+مولف قید می‌کند که برای برطرف کردن این مسائل ابزار
+\lr{MemGuard}
+را معرفی می‌کنیم.
+\begin{latin}
+    Unlike CPU bandwidth reservation, under MemGuard the
+    available memory bandwidth can be described as having
+    two components: guaranteed and best effort. The guaranteed
+    bandwidth represents the minimum service rate the DRAM
+    system can provide, while the additionally available bandwidth
+    is best effort and can not be guaranteed by the system. Memory
+    bandwidth reservation is based on the guaranteed part in order
+    to achieve temporal isolation. However, to efficiently utilize all
+    the guaranteed memory bandwidth, a reclaiming mechanism is
+    proposed leveraging each core’s usage prediction. The system
+    throughput is further improved by exploiting the best effort
+    bandwidth after the guaranteed bandwidth of each core is
+    satisfied.
+    Since our reclaiming algorithm is prediction based, misprediction can
+    lead to a situation where guaranteed bandwidth is
+    not delivered to the core. Therefore, MemGuard is intended to
+    support mainly soft real-time systems. However, hard real-time
+    tasks can be accommodated within this resource management
+    framework by selectively disabling the reclaiming feature.
+    We evaluate the performance of MemGuard under different
+    configurations and we present detailed results in the evaluation
+    section.
+\end{latin}
+در این بخش هدف از مقاله را داریم که این هدف به ویژگی‌های روش معرفی شده در این مقاله
+می‌پردازد.
+تعریف هدف در این بخش کمی مشکل است ولی با تخفیف می‌توان این ویژگی‌های این روش
+را به هدف مقاله مربوط کرد.
+\begin{latin}
+\textcolor{red}{In summary}, the contributions of this work are: (1)
+decomposing overall memory bandwidth into a guaranteed and a
+best effort components. Then, we experimentally identify the
+boundary so we can apply the proposed reservation technique;
+(2) designing and implementing (in Linux kernel) an efficient
+memory bandwidth reservation system, named MemGuard;
+(3) evaluating MemGuard with an extensive set of realistic
+SPEC2006 benchmarks [11] and showing its effectiveness on
+a real multi-core hardware platform.
+The remaining sections are \textcolor{red}{organized as follows}: Section
+II describes the challenge of predictability in modern multicore systems.
+Section III describes the details of the proposed
+MemGuard approach. Section IV describes the evaluation
+platform and the software implementation. Section V presents
+the evaluation results. Section VI discusses related work. We
+conclude in Section VII.
+\end{latin}
+در آخر ساختار مقاله مطرح شده است که نشان می‌دهد این مقاله راه‌حل جدیدی را ارائه می‌کند.
+\bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+\end{document}

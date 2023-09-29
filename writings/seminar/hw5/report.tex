@@ -1,0 +1,70 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\usepackage{xepersian}
+\settextfont[Scale=1]{HM FNazli}
+\setlatintextfont[Scale=.9]{Noto Sans}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+
+\title{
+    تمرین شماره پنج
+}
+\author{حسین افکار}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+در این بخش سعی ما بر این است که نتیجه‌گیری و عنوان مقاله را نقد کنیم.
+\section{نقد نتیجه‌گیری مقاله}
+در اولین بخش در مورد هدف اصلی این مقاله صحبت شده است.
+\begin{latin}
+We have presented MemGuard, a memory bandwidth reservation system,
+for supporting efficient memory performance
+isolation on multi-core platforms.
+\end{latin}
+بخش بعدی خلاصه مهم‌ترین یافته مقاله است که ابزار
+\lr{MemGuard}
+می‌باشد.
+\begin{latin}
+It decomposes memory
+bandwidth as two parts, guaranteed bandwidth and best effort
+bandwidth. Memory bandwidth reservation is provided for
+the guaranteed part for achieving performance isolation. An
+efficient reclaiming mechanism is proposed for effectively
+utilizing the guaranteed bandwidth. It further improves system
+throughput by exploiting best effort bandwidth after each core
+satisfies its guaranteed bandwidth. It has been implemented
+in Linux kernel and evaluated on a real multi-core hardware
+platform.
+\end{latin}
+در آخر به شرح و بحث و توضیح راجع‌به نتایج می‌پردازد.
+\begin{latin}
+Our evaluation with SPEC2006 benchmarks showed that
+MemGuard is able to provide memory performance isolation
+under heavy memory intensive workloads on multi-core platforms.
+It also showed that the proposed reclaiming algorithm
+improves overall throughput compared to a reservation only
+system under time-varying memory workloads.
+\end{latin}
+این مقاله بخش‌های محدودیت مطالعه، نتایج ضمنی مطالعه، و تحقیقات آتی را ندارد.
+\section{نقد عنوان مقاله}
+\begin{latin}
+MemGuard: \textcolor{olive}{Memory Bandwidth Reservation
+System} \textcolor{green}{for Efficient Performance Isolation} in
+\textcolor{blue}{Multi-core Platforms}
+\end{latin}
+در عنوان مقاله بخش ویژگی حذف شده است و روش‌کار در عنوان مقاله آورده نشده است.
+\bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+\end{document}

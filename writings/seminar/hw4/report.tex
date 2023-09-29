@@ -1,0 +1,272 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{xcolor}
+\usepackage{xepersian}
+\settextfont[Scale=1]{HM FNazli}
+\setlatintextfont[Scale=.9]{Noto Sans}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+
+\title{
+    تمرین شماره چهار
+}
+\author{حسین افکار}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+در این تمرین به بررسی بخش نتایج می‌پردازیم \\
+در این مقاله بخشی که به نتایج کار می‌پردازد بخش
+\lr{Evaluation Results and Analysis}
+است.
+سه هدفی که در بخش مقدمه برای این مقاله مطرح شده بود به شرح زیر می‌باشد.
+\begin{enumerate}
+    \item تقسیم پهنای‌باند حافظه به دو بخش گارانتی شده و بهترین تلاش ممکن.
+    \item طراحی ابزار به صورت ماژول کرنل
+    \item سنجش این مقسم پهنای باند در بنچ‌مارک‌های
+    \lr{SPEC2006}.
+\end{enumerate}
+بخش اولی که در مبحث نتایج مطرح شده است بخش
+\lr{Guaranteed Memory Bandwidth}
+می‌باشد.
+\begin{latin}
+\textcolor{red}{Table I shows the aggregated memory bandwidth of all cores.}
+\textcolor{blue}{First, note that the memory
+access pattern significantly affects achieved bandwidth. The
+latency benchmark running on a single core achieved only
+0.6GB/s, while the bandwidth benchmark achieved 6GB/s. As
+we increase the number of cores, the aggregated bandwidths
+are increased in both benchmarks due to increased MLP. If all
+requests from all cores are directed to the same DRAM chip
+and the same DRAM bank, achieved bandwidth can be close
+to 0.6GB/s as MLP would be totally eliminated. On a typical
+multi-programmed workload, however, such possibility would
+be very low.}
+\textcolor{olive}{We found 1.2GB/s is a practical minimum service
+rate for our platform and used it as the rmin for configuring
+MemGuard in the rest of the evaluation unless otherwise noted.}
+\end{latin}
+این قسمت توجه‌ما را به جدول یک جلب می کند که با استفاده از این جدول حداکثر پهنای باند قابل گارانتی سیستم به ما نشان داده شد
+که می‌توانیم این مقدار را در الگوریتم ارائه داده شده که نیازمند دریافیت این مقدار است، جایگذاری کنیم. \\
+بخش
+\lr{Isolation Effect of Reservation}
+به تأثیر تقسیم پهنای باند بر روی کارآیی می‌پردازد که برای این‌ کار از
+\lr{SPEC2006}
+استفاده کرده است.
+\begin{latin}
+\textcolor{red}{Figure 7 shows the IPC of each foreground task, normalized
+to the IPC measured in isolation (i.e., no background task)
+with the same 1.0GB/s reservation.}
+\textcolor{blue}{First, notice that when we
+assign 0.2GB/s to Core 2 (denoted ”w/ lbm:0.2G”), the IPC of
+each task is very close to the ideal value 1.0—i.e., no negative
+performance impact from the co-running background task.
+However, as we increase the memory bandwidth of Core 2,
+the IPC of the foreground task gradually decrease below 1.0—
+i.e., performance isolation is violated due to increased memory
+contention. For example, 462.libquantum on Core0 shows 30%
+IPC reduction when the background task is running on Core2
+with 2.0GB/s reservation (denoted ”w/ lbm:2.0G”).}
+\textcolor{olive}{This results demonstrate that performance isolation can
+be achieved by regulating the aggregated total request rate.
+Specifically, limiting the rate to be smaller than rmin achieves
+performance isolation for the SPEC benchmarks shown in this
+figure. The rest of SPEC benchmarks also show consistent
+behavior but we omit them for space limitation.}
+\end{latin}
+هدف ارائه این بنچ‌مارک این بوده است که متوجه شویم قید گارانتی کردن پهنای باند
+وجود دارد که این نتیجه در بخش زیتونی رنگ آورده شده و نشان می‌دهد که کارآیی برنامه اصلی با افزایش برنامه‌ای
+که در پیش‌زمینه اجرا می‌شود تا ۳۰ درصد می‌تواند کاهش یابد
+که البته درصورتی که مجموع پهنای‌باند را کمتر از مقدار جدول قبلی در نظر بگیریم این ایراد رخ نمی‌دهد. \\
+بخش بعدی در این مقاله
+\lr{Results with SPEC2006 Benchmarks on Two Cores}
+می‌باشد که به بررسی عملکرد ماژول کرنل در حضور بنچ‌مارک می‌پردازد
+\begin{latin}
+\textcolor{red}{Table II shows the results in decreasing order of average
+memory bandwidth usage, when each benchmark runs alone
+in our evaluation platform.}
+\textcolor{olive}{Notice that the benchmarks cover a
+wide range of memory bandwidth usage, ranging from 1MB/s
+(453.povray) up to 2.1GB/s (470.lbm).}
+\end{latin}
+این جدول یک راهنما برای مقایسه کردن نتایج است در این توضیحات بخش‌های ۱ و ۲ ترکیب شده‌اند.
+\begin{latin}
+\textcolor{red}{Figure 8 shows the normalized IPCs of each pair of foreground (X-axis) and background (470.lbm) tasks, w.r.t. IPCs
+measured in isolation with the same memory reservations, for
+(a) reclaim, (b) spare bandwidth sharing, and (c) reclaim+spare
+bandwidth sharing.}
+\textcolor{olive}{ The X-axis shows foreground tasks, sorted
+in decreasing order of memory intensity. Note that Core 2,
+which runs the background task, is severely under-reserved;
+only 200MB/s is reserved while the task’s average bandwidth
+is above 2GB/s in Table II.}
+\end{latin}
+در این بخش شکل ۸ توضیح داده شده است که شامل سه زیر شکل است. همچنین در این توضیحات
+بخش‌های ۱ و ۲ ترکیب شده‌اند.
+\begin{latin}
+\textcolor{red}{Figure 8(a) shows the effect of bandwidth reclaiming.}
+\textcolor{olive}{For
+most pairs, the background task achieves a higher IPC w.r.t.
+running alone under the same reservation without reclaiming.
+This can be explained as follows: if the foreground task does
+not use the assigned budget, the background task can effectively reclaim the unused budget and make more progress. In
+particular, the background tasks in right side of the figure show
+significant performance improvements (from 433.milc on the
+X-axis). This is because the corresponding foreground tasks
+use considerably smaller average bandwidth than the assigned
+budget. Consequently, the background tasks can reclaim more
+budget and achieve higher performance.}
+\textcolor{blue}{The average IPC of
+each background task is improved by 3.8x, compared to the
+case when it runs alone under 0.2 GB/s bandwidth reservation.
+Note that the slowdown of foreground task, due to reclaiming
+of background task, is small—less than 3\% on average.}
+\textcolor{olive}{The slight performance reduction, i.e., reduced performance
+isolation, can be considered as a limitation of our prediction
+based approach which can result in reclaim underrun error as
+described in Section III-C.}
+\end{latin}
+در این توضیحات بخش ۳ به دو بخش تقسیم شده که بخش ۲ بین‌ آن فاصله انداخته و در بین بخش
+۳ قرار گرفته است.
+\begin{latin}
+\textcolor{red}{To better understand this, Figure 9
+shows the reclaim underrun error rate (error periods / total
+periods) for Figure 8(a).}
+\textcolor{blue}{On average, the error rate is 4\% and
+the worst case error rate is 16\% for 483.xalancbmk.}
+\textcolor{olive}{Although
+483.xalancbmk suffers higher reclaim underrun error rate, it
+does not suffer noticeable performance degradation, because
+the absolute difference between the reserved bandwidth and
+the achieved bandwidth is relatively small in most of the
+reclaim underrun error periods.}
+\end{latin}
+در این بخش شکل ۹ برای خطای بازپس گیری حافاظه در زمان
+\lr{Over Commit}
+نشان داده شده است. نتیجه‌ای که از این شکل گرفته می شود این است که میانگین نرخ خطا
+چهار درصد است که در بدترین شرایط این نرخ خطا به ۱۶ درصد می‌رسد.
+\begin{latin}
+\textcolor{red}{Figure 8(b) shows the effect of spare bandwidth sharing.
+Notice that the background tasks on the left side of the figure
+show more significant improvements.}
+\textcolor{olive}{This is because when
+both tasks are highly memory intensive, the reserved bandwidth of each core is consumed more quickly. After using the
+total reserved bandwidth, rmin, the spare bandwidth sharing
+mode allows both tasks make more progress by allowing them
+to continue to execute. Note that the spare bandwidth sharing
+mode is also beneficial to the foreground tasks, especially the
+memory intensive ones, as they can receive more budget while
+they still exclusively use their reserved budgets.}
+\textcolor{blue}{On average,
+the performance is improved by 40\% for background tasks
+and by 9\% for foreground tasks.}
+\end{latin}
+در این توضیحات نیز بخش ۲ و ۳ جابه‌جا شده‌اند که یعنی ابتدا توضیحات نتایج داده شده است و سپس
+مهم‌ترین یافته درون نتایج آورده شده است.
+\begin{latin}
+\textcolor{red}{Figure 8(c) shows the effect of using both reclaim and
+spare bandwidth sharing.}
+\textcolor{olive}{It can be considered roughly as
+the combination of the two previous results: the background
+task gets speedup either from reclaiming or spare bandwidth
+sharing.}
+\textcolor{blue}{The performance of background tasks is improved by
+368\% (i.e., 4.68x speedup) on average. This shows the
+effectiveness of our approach.}
+\end{latin}
+در این بخش از توضیحات نشان داده شد که استفاده از
+\lr{Reclaimation}
+تاثیر بسیار زیادی بر روی
+\lr{Speedup}
+سیستم دارد.
+\begin{latin}
+\textcolor{red}{Finally, Figure 10 compares throughput with and without
+using MemGuard (both reclaim and spare bandwidth sharing
+modes are enabled).}
+\textcolor{olive}{The Y-axis shows the IPC sum of each
+pair of foreground and background tasks that represents the
+system throughput of the pair. Although the system without
+MemGuard achieves higher throughput in general, it does not
+provide performance isolation. MemGuard provides performance isolation at a reasonable throughput cost.}
+\end{latin}
+در این توضیحات بخش‌های ۱ و ۲ ترکیب شده‌است. \\
+بخش بعدی نتایج این مقاله در مورد
+\lr{Results with SPEC2006 on Four Cores}
+است.
+\begin{latin}
+\textcolor{red}{Figure 11(a) shows the normalized IPC of each task when
+all four tasks are co-scheduled (1) without using MemGuard,
+(2) MemGuard with reservation only, and (3) MemGuard with
+both reclaiming and spare bandwidth sharing.}
+\textcolor{blue}{The Y-axis is
+normalized to the IPC measured in isolation under MemGuard
+with reservation only mode. The rmin is 1.2GB/s and the
+weight assignment of each core is 9:1:1:1 for Core 0-3 (i.e.,
+900MB/s for Core0, 100MB/s for Core1-3).}
+\textcolor{olive}{The first group of bars, without MemGuard, shows that
+462.libquantum on Core 0 is 33\% slower than the baseline
+reservation only case while the other three tasks have much
+higher IPCs. Although it is clear that overall throughput is
+better without using MemGuard, it can not provide isolated
+performance guarantee for one specific task, in this case
+462.libquantum. The second group, MemGuard with reservation, shows that each task achieves its performance goal set by
+its reserved memory bandwidth, as the IPC of each benchmark
+is nearly identical to the one of running alone. The final
+group, MemGuard with reclaim and spare bandwidth sharing,
+shows that performance of all three tasks at Core 1,2 and 3
+are considerably improved without hurting the performance of
+462.libquantum.}
+\end{latin}
+در این توضیحات استفاده از این ماژول کرنل با حالتی که سیستم آزاد است مقایسه شده است.
+که نتیجه می‌دهد این ابزار کار خود را به خوبی انجام می‌دهد و بر روی کارآیی تاثیری نمی‌گذارد.
+\begin{latin}
+\textcolor{red}{Figure 11(b) follows the same weight settings but doubles
+the rmin value to 2.4GB/s in order to compare its effect on
+throughput and performance isolation.}
+\textcolor{olive}{The tendency is that
+the performance of each task on Core 1, 2, and 3 improves
+at the cost of reduced performance of 462.libquantum at Core
+0.}
+\textcolor{blue}{Under MemGuard with reservation only, 462.libquantum is
+slowed by 17\% compared to running alone under the same
+reservation.}
+\textcolor{olive}{In other words, reservation does not provide performance isolation anymore due to memory contention. This is
+consistent with our finding in Section V-B. Under MemGuard
+with reclaim and spare bandwidth sharing mode, the IPC of
+462.libquantum is further reduced, because other cores can
+generate more interference using reclaimed bandwidth that
+462.libquantum donated. This shows the trade off between
+throughput and performance isolation when using MemGuard.}
+\end{latin}
+در این بخش دو ست بیان مهم‌ترین یافته و توضیح داریم که مهم‌ترین یافته
+اول درون بخش ۱ قرمز مخفی شده است ولی مهم‌ترین یافته دوم بخش جدا برای خود دارد.
+در این بخش طبق جمله آخر نشان می‌دهد که چه بالانسی بین نرخ خروجی باند و کارآیی وجود دارد. \\
+آخرین بخش به نام
+\lr{Effect on Soft Real-time Applications}
+است. در این بخش تاثیر این ماژول کرنل بر یک برنامه بی‌درنگ پخش ویدیو سنجیده شده است.
+\begin{latin}
+\textcolor{red}{Figure 12(a) shows the frame-rate of each fps instance
+on each core without using MemGuard.}
+\textcolor{olive}{As they all access
+memory in a same way, they get the same fraction of memory bandwidth; hence resulting almost identical frame-rates.}
+\textcolor{red}{Figure 12(b) shows the frame-rates with MemGuard.}
+\textcolor{olive}{As we
+assign different weights for each core, each instance shows
+different frame-rates, demonstrating the effect of MemGuard.}
+\end{latin}
+در قسمت آخر در مورد نتایج عددی بحثی نشده است ولی اثر آن که یکسان کردن
+نرخ فریم برای هسته‌های مجزا است در جمله آورده شده است که از روی شکل واضح است.
+\bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+\end{document}

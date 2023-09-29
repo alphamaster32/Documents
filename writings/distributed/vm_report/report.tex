@@ -1,0 +1,168 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[framed]{ntheorem}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+\theoremstyle{nonumberplain}
+\newtheorem{definition}{Definition}
+
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
+
+\title{Virtual Machine Environment}
+\author{Hossein Afkar}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{Environment}
+In this assignment we used the lxd virtual machine environment to deploy
+machines. LXC is the linux container environment that was built in 2008 and
+used cgroups for containerization of applications. LXD was built on top of
+this abstraction in order to manage this library. LXD also offers to use KVM
+for full virtualization of the operation system and underlying components. \\
+First we should initialize and init our lxd machines by using the following
+commands.
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+lxd init
+lxd launch ubuntu:22.04 server --vm
+lxd launch ubuntu:22.04 client --vm
+\end{lstlisting}
+
+For archlinux host machines that do not have the secureboot shim in the OVMF
+package we should supply following command to disable the secureboot.
+
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+lxc profile set default security.secureboot=false
+\end{lstlisting}
+
+Then we are presented by the VMs \textit{client} and \textit{server} in the
+image list which we can get a shell from with the following command.
+
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+lxc exec server -- bash
+root@server:~#
+\end{lstlisting}
+
+After this we will get a environment to run our sample code on.
+
+\section{Client and Server}
+For this use case we chose the golang programming language because golang is
+the defacto programming language of the cloud and it provides nice tooling and
+very fast compile and runtimes. \\
+Methods of communications between client and server will be a http socket
+that utilizes the http standard library of the golang programming language. \\
+
+\pagebreak
+Server Code is presented as follows.
+
+\begin{lstlisting}[language=go]
+func serve(port int) error {
+	port_str := ":" + strconv.Itoa(port)
+	tcpAddr, err := net.ResolveTCPAddr("tcp4", port_str)
+	if err != nil {
+		return err
+	}
+
+	listener, err := net.ListenTCP("tcp", tcpAddr)
+	if err != nil {
+		return err
+	}
+
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			continue
+		}
+		conn.Write([]byte("Hello World!"))
+		conn.Close()
+	}
+
+	return nil
+}
+\end{lstlisting}
+
+Client Code is also presented below.
+
+\begin{lstlisting}[language=go]
+func get(port int) error {
+	port_str := ":" + strconv.Itoa(port)
+	tcpAddr, err := net.ResolveTCPAddr("tcp4", port_str)
+	if err != nil {
+		return err
+	}
+
+	conn, err := net.DialTCP("tcp", nil, tcpAddr)
+	if err != nil {
+		return err
+	}
+
+	result, err := ioutil.ReadAll(conn)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(result))
+
+	return nil
+}
+
+\end{lstlisting}
+
+To push the files to the vm we can either use scp or lxc.
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+lxc file push lightship.tar.gz server/root/
+lxc file push lightship.tar.gz client/root/
+\end{lstlisting}
+
+Then we will run the application in client or server mode.
+
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+lighship server -p 10808
+lighship client -p 10808
+\end{lstlisting}
+
+Output of the client program with the running server is listed as follow.
+
+\begin{lstlisting}[language=bash]
+root@client:~# ./lightship/release/lightship client -p 10808 -a 10.128.152.62
+10.128.152.62
+Hello World!
+root@client:~#
+\end{lstlisting}
+
+\section{Conculsion}
+In this project we created two virtual machines and connected them using a
+bridge. By using the golang programming language which is the defacto language
+of cloud and the platform for docker and kubernetes, we was able to create a
+tcp socket and send a \textit{Hello World!} from the server to the client
+program.
+
+
+
+% \bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+\end{document}

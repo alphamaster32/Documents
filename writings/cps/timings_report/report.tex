@@ -1,0 +1,135 @@
+% LaTeX Template for short student reports.
+% Citations should be in bibtex format and go in references.bib
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=3cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage[pdftex,bookmarks,colorlinks,breaklinks]{hyperref}  
+\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black} % black links, for printed output
+\usepackage{memhfixc} 
+\usepackage{pdfsync}  
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\title{Timing Anomalies in Dynamically Scheduled Microprocessors}
+\author{Hossein Afkar}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{Introduction}
+Timing analysis is an important part of modeling in real-time systems.
+One of the important metrics in timing analysis is WCET or worst-case execution
+time. Before the introduction of this paper, the way to estimate WCET was to
+use the longest instruction latency and assume the cache will always miss.
+This paper proves that in processors using instruction-level parallelism or
+ILP, estimated WCET may be wrong and anomalies occur in several parts related
+to pipelines and caches.
+This paper identifies the conditions for these anomalies to occur and it also
+presents various ways of estimating WCET in a processor with dynamic
+instruction scheduling.
+
+
+\section{Methods and Materials}
+This paper starts by defining, what a timing anomaly is. If the instruction
+latency is increased by \textit i or decreased by \textit d, the timing anomaly
+happens if latency passes the boundary of zero and \textit i and the same
+settings apply for the \textit d in the decreased cycles as it should not be
+decreased past this value or become an instruction that increases in the
+latency.
+It also defines a processor which is not dynamically scheduling
+instructions are free of timing anomalies.
+after the explanation of examples of how this anomalies can occur, ways of
+eliminating these anomalies are defined and by using the \textit{PSIM} which is
+a per cycle PowerPC ISA simulator on an overall of seven benchmark programs
+is evaluated
+These benchmark programs are compiled using the gnu compile collection
+using \textit{-O0} which disables the optimizations incurred by the compiler.
+Methods defined by this paper to eliminate the anomalies listed as
+follow
+\begin{description}
+    \item[The pessimistic serial execution model] Assuming a serial
+    the processor we can make add the instruction latencies but we should
+    assume that in each functional unit there is a single instruction
+    executing at a time
+    \item[The program modification method] The latter method is way too
+    pessimistic. One way to make a better estimate of the WCET is to modify
+    the program and insert instructions to flush the pipeline, cache, and
+    the page table like \textit{invlpg}, \textit{wbinvd}, and
+    \textit{cpuid} a serializing instruction like \textit cpuid should be
+    executed after any variable latency instruction to make the state of 
+    the pipeline is known to the environment.
+\end{description}
+After defining these methods, using the \textit{PSIM} simulator WCET of the
+The latter benchmark is computed using the program modification method described
+above.
+
+\section{Results}
+The WCET of seven benchmarks such as \textit{matmult}, \textit{bsort}, 
+\textit{fib}, and more are calculated using the modified \textit{PSIM} that is
+attached to a timing simulator based on the previous works that the authors
+have done on cycle level symbolic execution and the ISA used for this analysis
+is based on PowerPC. The results are not based on the detailed simulation of 
+the pipeline instead the serial execution time is divided by the number of 
+issues the architecture has. Also when modifying the program this paper used
+\textit{sync} instruction to flush the pipeline and is placed on the merging
+point of the paths taken on the program. Also, the \textit{sync} latency is 
+assumed to be 8 cycles when put before and after a variable latency 
+instruction. The actual WCET was computed by running the program with random 
+data if the worst-case scenario was too complex to determine. This paper has
+also calculated WCET based on worst-case serial execution and the proposed
+program modification. Also for comparison, the unsafe WCET is included to be 
+compared against the latter WCET calculation methods.
+According to the results, the serial execution model overestimates the WCET at
+least by a factor of 2. The estimated WCET of a modified program, however, is 
+shorter than serial execution in all benchmarks, also in \textit{fib} and
+\textit{DES} this method produced no additional overhead at all because these
+programs contained no variable length latencies so no sync was inserted a no 
+merging of the program paths has been done. In \textit{matmult} and 
+\textit{ifdctint} slow down is caused by variable length instructions but no 
+merging was done in these programs. For the remaining programs, the slowdown is 
+mostly the product of merging and variable latency instructions. These results
+show that the program modification method works well for programs with 
+variable latency instructions.
+
+\section{Discussion}
+Results show that the program modification method can be used to get a fairly 
+accurate estimation of how the program behaves in dynamically scheduled 
+processors, however, there must be support in the underlying architecture to 
+support this method. For example, if we use a RISCV32IM without the A extension 
+which enables the atomic instructions to support we may not have the ability 
+to flush the pipeline buffer to support this method of program modification.
+Also using this method we must statically account for the events that happen 
+in the context of program execution like syscalls and interrupts. Also, 
+the scheduling of the tasks by the operating system may not be handled like merge 
+points in the lifetime of a program. Also syncing primitives for various 
+architectures like \textit{x86\_64} may not empty the pipeline deep enough to 
+make the state of the pipeline known to the environment. In addition emulation 
+of some architectures might not be equally possible and materials explaining 
+how the ISA schedules and dispatches instructions may be limited and which may 
+make constructing a dependable and deterministic emulator impossible. also in
+an environment where architectural issues are more than two the estimation of 
+the serial time being a fraction of the number of issues is not accurate as the
+several issues present in \textit{CISC} environments might become too tricky to
+handle in this context.
+
+\section{Conclusion}
+This paper defines a set of definitions to make an understanding of the timing 
+anomalies in the context of the multi-issue pipelined processors easier.
+Showing how anomalies work in the context of a PowerPC ISA made clear 
+that estimation of the WCET in a multi-issue machine
+needs to be something more than calculating the WCET for each instruction and
+sum them up. Also by defining the methods like program modification and serial
+the execution made a framework for estimating WCET much closer to what happens
+in reality.
+
+
+\bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+\end{document}

@@ -1,0 +1,78 @@
+\documentclass[a4paper, 10pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[framed]{ntheorem}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+\theoremstyle{nonumberplain}
+
+
+\title{
+    Progress Report:
+    Real-time Communications using a Shared Memory Concept
+}
+\author{Hossein Afkar \and Sina MirSattarian}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+In this project we proposed an architecture for a soft real-time memory
+bandwidth reservation system for communication in real-time containers.
+Communication in real-time containers is a very important topic according
+to the survey\cite{survey}. Local real-time communication between real-time
+containers is also an important notion in Industry 4.0 therefore we focused on
+this issue. \\
+Existing solutions did not take into account the real-time properties of the
+software and the importance of bandwidth reservation in local communication. \\
+What we achieved so far and solved challenges:
+\begin{itemize}
+    \item Overview of container communication methods.
+    \item What we need for real-time capabilities.
+    \item Architecture of an real-time local communication that can be mapped
+        to the network using RDMA.
+\end{itemize}
+
+What we need to achieve and remaining challenges:
+\begin{itemize}
+    \item Practical implementation inside linux.
+    \item Gathering data and comparison between GRPC and our method in local
+        environment.
+\end{itemize}
+
+Practical implementation may be the bottleneck for our project.
+Also polishing the proposed architecture is an important part of our porject.
+Estimated time to finish may be in first half of the month of tir.
+
+
+% \bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+
+\begin{thebibliography}{3}
+    \bibitem{memguard} Yun, Heechul, et al.
+        "Memguard: Memory bandwidth reservation system for efficient
+        performance isolation in multi-core platforms." 2013 IEEE 19th
+        Real-Time and Embedded Technology and Applications Symposium (RTAS).
+        IEEE, 2013.
+    \bibitem{shimmy} Abranches, Marcelo, and Sepideh Goodarzy.
+        "Shimmy: Shared memory channels for high performance inter-container
+        communication." USENIX Workshop on Hot Topics in Edge Computing
+        (HotEdge). 2019.
+    \bibitem{survey}
+        Struhár, Václav, et al. "Real-time containers: A survey."
+        2nd Workshop on Fog Computing and the IoT (Fog-IoT 2020).
+        Schloss Dagstuhl-Leibniz-Zentrum für Informatik, 2020.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,283 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[framed]{ntheorem}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+\theoremstyle{nonumberplain}
+\newtheorem{definition}{Definition}
+
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
+
+\title{HW1: Shell Scripting}
+\author{Hossein Afkar}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{del.sh}
+The first described script performs a remove of range of lines specified
+in in the command inputs.
+For inputs the \textit{getopts} was used and after it two args for the line
+ranges is also used to isolate the lines required to show. \\
+\begin{lstlisting}[language=bash]
+while getopts ":i:" o; do
+    case "${o}" in
+        i)
+            FILE=${OPTARG}
+            ;;
+        *)
+            usage
+            exit 1
+            ;;
+    esac
+done
+# Aftermath of the `getopts`
+# Use shift to remove the parsed operands
+shift $(($OPTIND - 1))
+RANGE_1=$1
+RANGE_2=$2
+\end{lstlisting}
+Then each line from a file is read and if the line number is between the range
+it will be printed otherwise it will be not.
+Range was set to be including.
+\begin{lstlisting}[language=bash]
+[hossein@TiD shell_advt]$ ./del.sh -i file 1 2
+line1
+line2
+[hossein@TiD shell_advt]$
+\end{lstlisting}
+
+\section{kill.sh}
+This script will kill the process by sendig a \textit{SIGTERM} to the process
+by using its process id, if the process exceeds the cpu percentage and usage
+time proviede to the script.
+\begin{lstlisting}[language=bash]
+{
+    # Extra read to discard the first line
+    read
+    while IFS= read -r line
+    do
+        CPU_USAGE=$(echo $line | cut -d' ' -f3)
+        PID=$(echo $line | cut -d' ' -f1)
+        SECOND=$(echo $line | cut -d' ' -f2)
+        if [[ $(echo "$CPU_USAGE > $CPU" | bc) -ne 0 ]]; then
+            kill -9 $PID
+        fi
+        if [[ $(echo "$SECOND > $TIME" | bc) -ne 0 ]]; then
+            kill -9 $PID
+        fi
+    done 
+}< <(ps -eo pid,etimes,%cpu)
+
+\end{lstlisting}
+Every line of the \textit{ps} command will be read and if the cpu usage or
+running time exceeds the times specified to the script it will kill the process
+by sending a \textit{SIGTERM} to the program by utilizing the \textit{kill}
+command.
+This command is very destructive and does not have an expressable output.
+\begin{lstlisting}[language=bash]
+root@test:~# ./kill.sh
+kill.sh -c cpu -t time
+root@test:~# ./kill.sh -c 5 -t 100
+Error: websocket: close 1006 (abnormal closure): unexpected EOF
+[hossein@TiD ~]$
+\end{lstlisting}
+As you can see the ssh daemon of the remote machine has been killed by running
+this command.
+
+\section{mynet1.sh}
+In this script we should extract the ip address for all the active links in
+the system.
+This is achieved by reading the output of the \textit{ip addr} line by line
+and using \textit{awk} to extract the lines following \textit{inet}
+Also grep could be used for this script which outputs whole ip addresses
+without the ip block range included.
+
+\begin{lstlisting}[language=bash]
+[hossein@TiD shell_advt]$ ./mynet1.sh
+127.0.0.1
+192.168.1.8
+192.168.1.9
+10.128.152.1
+[hossein@TiD shell_advt]$
+\end{lstlisting}
+
+\section{mynet2.sh}
+This script changes the ip and dns server.
+Changing the ip address is straight forward and the \textit{ip} command can
+be used for changing the ip address but the dns server requires root access.
+Changing the dns on modern systems that use systemd as their PID 0 is handled
+with \textit{systemd-resolved} and the old \textit{resolv.conf} is not respected
+anymore. Therefore this script checks for the root access and resovlectl being
+present then proceeds with using the commands required to change the ip address
+and dns server.
+This command has no apparent output and due to the destructive nature of this
+command it was not run on the local machine and rather in an lxc virtual
+machine.
+
+\begin{lstlisting}[language=bash]
+root@test:~# ./mynet2.sh
+root@test:~# ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: enp5s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 00:16:3e:a3:b7:d3 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.15.0/24 scope global enp5s0
+       valid_lft forever preferred_lft forever
+root@test:~# resolvectl
+Global
+       Protocols: -LLMNR -mDNS -DNSOverTLS DNSSEC=no/unsupported
+resolv.conf mode: stub
+
+Link 2 (enp5s0)
+    Current Scopes: DNS
+         Protocols: +DefaultRoute +LLMNR -mDNS -DNSOverTLS DNSSEC=no/unsupported
+Current DNS Server: 8.8.8.8
+       DNS Servers: 8.8.8.8 10.128.152.1
+        DNS Domain: lxd
+\end{lstlisting}
+
+\section{mynet3.sh}
+This command increments ip address by 1 every five seconds
+The script logic is presented as follow
+\begin{lstlisting}[language=bash]
+while sleep 5; do
+    IP_ADDR=$(awk -F\. '{ print $1"."$2"."$3"."$4+1 }' <<< $IP_ADDR)
+    ip addr flush $LINK$
+    ip addr add "$IP_ADDR/24" dev $LINK
+done
+\end{lstlisting}
+every five seconds the ip is incremented by 1. Note that this will not start
+incrementing the ip address beyond 255 and it will fail but parsing the whole
+ip address is deemed unneccessary but nevertheless it could be done using a
+more complex \textit{awk} script.
+This command has no explicit output but is verified that it works correctly in
+a virtual machine as it is also disruptive to the workflow.
+
+\section{mycopy}
+This command tries to emulate \textit{cp} and \textit{cat} by looking at
+the number of arguments passed into it.
+A switch statement is called on the number of arguments and the program
+logic decides which behaviour to emulate.
+The whole program is consisted of read and write syscalls and for demonstration
+the \textit{cat} behaviour of the program is presented as follow.
+\begin{lstlisting}[language=c]
+fd_from = open(argv[1], O_RDONLY);
+if (fd_from < 0) {
+    return EBADF;
+    goto fd_err;
+}
+while(nread = read(fd_from, buf, sizeof(buf)), nread > 0) {
+    write(STDOUT_FILENO, buf, nread);
+} 
+\end{lstlisting}
+output of the command is also presented as follow.
+\begin{lstlisting}[language=bash]
+[hossein@TiD shell_advt]$ ./mycopy
+Hello
+Hello
+World
+World
+^C
+[hossein@TiD shell_advt]$ ./mycopy file
+Hello
+World
+!
+[hossein@TiD shell_advt]$ ./mycopy file file_dup
+[hossein@TiD shell_advt]$ ./mycopy file_dup
+Hello
+World
+!
+\end{lstlisting}
+
+\section{mylist}
+This program should output the names of the files present at the specified
+directory. For this we utilized the \textit{dirent} header to get the
+directory entries that are present.
+
+\begin{lstlisting}[language=c]
+for (size_t i = 1; i < argc; i++) {
+    d = opendir(argv[i]);
+    if (d) {
+        while ((dir = readdir(d)) != NULL) {
+            printf("%s\n", dir->d_name);
+        }
+        closedir(d);
+    }
+}
+\end{lstlisting}
+Sample output is presented as follow:
+\begin{lstlisting}[language=bash]
+[hossein@TiD shell_advt]$ ./mylist
+.
+..
+kill.sh
+file_dup
+mylist.c
+mycopy
+Makefile
+mynet2.sh
+mynet3.sh
+myshell.sh
+mycopy.c
+mylist
+del.sh
+file
+mynet1.sh
+[hossein@TiD shell_advt]$
+\end{lstlisting}
+Note that the file discriptors for present directory and last directory
+are also present. They could be ommited by using an if directive but it was
+deemed unneccessary.
+
+\section{myshell.sh}
+In this script previous c programs must be used to craft a directory entry
+counter.
+\begin{lstlisting}[language=bash]
+# Output to the shell
+./mylist $DIR > file
+
+# Count the number of enteries
+./mycopy file | wc -l
+
+\end{lstlisting}
+This script will output mylist to the file and mycopy will read the file
+and will pipe it to the \textit{wc} to count the lines present that will
+represent the number of files.
+\begin{lstlisting}[language=bash]
+[hossein@TiD shell_advt]$ ./myshell.sh .
+15
+[hossein@TiD shell_advt]$ ./myshell.sh
+Incorrect number of arguments
+myshell.sh -i DIR
+[hossein@TiD shell_advt]$ ls -a | wc -l
+15
+[hossein@TiD shell_advt]$
+\end{lstlisting}
+
+% \bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+\end{document}

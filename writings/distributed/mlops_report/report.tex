@@ -1,0 +1,180 @@
+\documentclass[a4paper, 10pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[framed]{ntheorem}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+\theoremstyle{nonumberplain}
+
+
+\title{Designing An Open-Source Cloud-Native MLOps Pipeline}
+\author{Hossein Afkar}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{Introduction}
+The process of model deployment is a difficult part of the machine learning
+projects life-time. Machine learning projects add increased complexity to
+the machine learning projects. Current methods for handling machine learnings
+CI/CD pipelines are often proprietary. The discussed thesis proposes an
+easy-to-use MLOps pipeline that uses kubernetes for CI/CD pipelines handling
+and providing monitoring methods. \\
+
+\section{Ideas and Methods}
+This thesis provides three research questions that helps us identify the
+problem. After providing questions this thesis describes 9 objectives for the
+design of a pipeline. These objectives specify the need for a general purpose
+cloud configuration that well integrates into the existing cloud environment. \\
+
+The thesis continues with describing the DevOps methodologies and what
+pipelines are. Then the thesis proceeds with how these methodologies help
+in the machine learning environments with in the end have an impact on
+\textit{Organization Performance}. \\
+
+MLOps is the practice of applying DevOps to a software project that includes
+machine learning systems. Machine learning brings new roles and elements
+into the traditional DevOps pipelines. According to the thesis a machine
+learning process consists of:
+
+\begin{itemize}
+    \item Model Requirements - Not in Pipeline.
+    \item Data Cleaning - ETL.
+    \item Data Labeling - ETL.
+    \item Feature Engineering - Training Pipeline.
+    \item Model Training - Training Pipeline.
+    \item Model Evaluation - Training Pipeline.
+    \item Model Deployment - Serving Pipeline.
+    \item Model Monitoring - Serving Pipeline.
+\end{itemize}
+
+Machine learning systems require a extract-transform-load procedure.
+This procedure involes extracting data, cleaning and lableling it, and then
+loaded into production databases for training. \\
+Training pipelines are done after choosing a model. This model is 
+trained using different sets of input parameters and configurations.
+The final model is stored at a location and services using it will be able 
+to access it later. Served model should provide an interface for others to
+use. \\
+MLOps is introduced as a superset of DevOps. Having large data requirements
+and long pipeline executions differentiates it with normal pipelines.
+Artefacts are defined as the product of source code and data that is used to
+train the involved models. Because the training pipelines are time consuming
+it is better to have resuming capability in case that the pipeline is]
+terminated. Deployments should be divided into production and staging
+environments. Various monitoring measures are encouraged to be used in a 
+fast feedback loop on system warnings, bugs, and downtimes.
+\\
+There are a few mature MLOps platforms already availabile that is listed as
+follows:
+\begin{itemize}
+    \item AWS Sagemaker: Offered by AWS. Completely proprietary.
+    \item Kubeflow: Opensource toolkit. Hard integration and no continuous
+        delivery.
+    \item Valohai: Feature rich end-to-end platform. Propritary but
+        cloud-agnostic.
+    \item 
+\end{itemize}
+
+The design and implementation stage takes all the machine learning process
+lifecycles into account. \\
+GitOps is a way to implement cloud-native continuous delivery. GitOps is
+a part of the serving pipeline of the MLOps delivery pipeline. There are
+several tools that accomplish the GitOps workflow, notably ArgoCD, Flux, and
+Fleet. This thesis used Flux version 2 to track the repositories and
+bring the production environment to the desired state. This method reduces
+the \textit{works on my environment} issue. For model training process,
+this thesis has written a python wrapper that calls the specified functions -
+written in python - and collects data and logs related to the training
+environment. Seldon-core was using in writing this wrapper which is library
+for machine learning deployment. \\
+The solution proposed by this thesis is instructed to be run on a kubernetes
+cluster. The cluster architecture was described in the Figure 5.2 of the
+thesis. Componenst of this architecture are listed as follows:
+
+\begin{itemize}
+    \item Artefacts storage and version tracking: All code is stored in a git
+        repository. Large models and binaries are stored in a cloud storage.
+    \item Inference Server: Seldon-Core provides pre-packaged inference servers
+        Some of these servers provide gRPC or HTTP/REST servers.
+    \item Workflow Engine: Argo workflows is used in the design proposed by
+        this thesis. This tools helps us with the order of the workflow
+        and specifies events using Argo events.
+    \item Networking and Messaging: Defines how the different services
+        share data between each other. This thesis used Istio as service mesh
+        because of its maturity and integration with Seldon-Core.
+    \item Deployment Strategies: This system provides several stages of
+        verification and validation. In every code commit an automatic test
+        is run and after its success it is accepted in the staging or
+        production branches. Istio and Seldon-Core helps the design with
+        A/B testing methodologies.
+    \item Real-time Monitoring and Alerting: Prometheus is used for real-time
+        metrics of the cluster. Metrics are gathered and shown
+        using Grafana. Prometheus also enables us to define alerts with
+        user defined metric thresholds.
+    \item Offline Monitoring Systems: These systems monitor the cluster using
+        their inputs and outputs check if there is a issue with the cluster.
+        Offline monitors do not need to respond in real-time. Instead their
+        aggregation of inputs and outputs is stored elsewhere and distributed
+        in an asynchronous matter.
+\end{itemize}
+
+Last section of this thesis is devoted to the demonstration of the proposed
+architecutre. They used the MINIST dataset which is a collection of handwritten
+digits. This dataset is stored in an S3 object storage. From this data
+an Argo workflow pipeline was setup. This workflow checks the data and saves
+it into a another object in S3 storage. This data is cleaned and checked
+but these steps are performed to demonstrate the process of data validation
+and ETL. \\
+Then the predefined training implementation of the dataset is used. This
+training creates an output on S3 storage as the artefact of the pipeline.
+This file address is pushed to the staging branch. The staging model is also
+deployed into the production cluster as a shadow deployment. \\
+After this model is merged into the master branch the GitOps agent in the
+cluster can trigger the update of the new version of the inference server using
+the new model. \\
+
+Results show that this thesis answerred all the research questions proposed by
+this itself.
+Main limitation of this architecture revolve around the need for a kubernetes
+cluster and the need of containrized workflow. This means a DevOps team
+is neccessary for managing this kind of workflow. Also the difference between
+kubernetes distros may inccur some difficulty for migrating the existing
+cluster configurations.
+
+\section{Conclusion}
+This thesis proposed a design for an MLOps pipeline. Requirements was reviewd
+and objectives were proposed. The design proposed by this thesis
+can be implemented in most machine learning projects and thus could be able to
+provide automation and scalability for these kinds of projects.
+Future works may consist of a custom kubernetes operator to orchestrate
+the remaining life cycles. The solution for now is webhooks but a operator
+can handle complex process lifetimes and fault tolerance. Also studing the
+security of this pipeline might be considerable. Quantifing the results of
+this thesis is also another way of continuing this project.
+Overall this thesis made several ideas around DevOps and MLOps clear and
+proposed a opensource architecture to handle its objectives.
+Being able to rely on automation is a critical part of todays organizations
+and an MLOps pipeline will help AI comapnies achieve automation and developer
+happiness.
+
+
+
+% \bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+
+\end{document}

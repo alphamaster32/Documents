@@ -1,0 +1,117 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[framed]{ntheorem}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+\theoremstyle{nonumberplain}
+
+
+\title{Workload Prediction Using AI On Edge Compute Sites}
+\author{Hossein Afkar}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{Introduction}
+Rapid development in the edge computing has brough upon the need to
+accurately determine the required resources for the limited power that is
+available on edge computing nodes. With the recent increasing adoptation
+of edge computing, it is critical to efficiently and accurately predict
+workloads. \\
+In this report we try to see where the challenges are in edge workload
+prediction and also try to see if there are any
+deterministic ways of implementing workload prediction
+that can be used instead of AI in edge computing space.
+
+\section{Ideas and Methods}
+More services are adopting edge computing because of low latency and high
+bandwidth advantages. Limited resources in the edge is one of the most
+important characteristic of these systems. Predicting workload is an important
+part of the resource management for edge service providers.
+According to the paper \cite{paper} there are two approaches to the workload
+forecasting: edge-only and cloud-only. \\
+Edge only tries to implement the forecasting model on the edge site and
+it models the intra-site correlations accurately. This model fails to
+address the inter-site correalations with enough precision. \\
+Cloud-only workload forecasting refers to a centralized location for all edge
+sites to transmit their data into. This model adds additional time overhead
+to both the training and inference phase. To address the mentioned challenges
+the paper \cite{paper} introduces the ELASTIC tool that tries to solve the
+challenges. ELASTIC is based on two stages:
+\begin{itemize}
+    \item Global Stage: In this stage corase-grained spatial-temporal
+        forcasting at a centralized cloud is performed to capture
+        inter-site correlations.
+    \item Local Stage: This stage performs fine-grained spatial-temporal
+        forcasting in each edge site and the goal is to capture
+        the intra-site correlations between different workloads.
+\end{itemize}
+New research is geared towrads the AI in workload prediction as a simple search
+in \textit{google scholar} shows. In order to understand the path the research
+has taken it is important to know why deterministic algorithms fail at
+workload prediction.
+According to the phd thesis \cite{phd} there are five categorization of
+workloads in the edge computing space.
+\begin{enumerate}
+    \item Static Workload: This workload is from unchanged behaviour of the
+        users. It could be useful in determinisitc real-time communities.
+        Resource utilization in this space is constantand can be allocated
+        easily.
+    \item Periodic Workloads: Periodic workloads are characterized by periodic
+        increase and decrease in workload intensity over time. This can also
+        be utilized in real-time Industry 4.0 workloads and for ensuring
+        stability cloud providers must ensure the avalible resources during
+        peak workload input patterns.
+    \item Unpredictable Workloads: This workload defines increasing and
+        decreasing workload intensity without any pattern or hard to detect
+        patterns. Cloud providers often face unexpected and unplanned
+        resource change from these workloads
+    \item Continuously Changing Workloads: These workloads gradually increase
+        or decrease in response to traffic arrival rate. Such workloads are
+        easy to determine and their changes are often linear with regards to the
+        traffic.
+    \item Once-in-a-lifetime Workloads: These workloads are stable in a long
+        time interval but at a certain point they will experience a strong
+        change. The peak is very rare but cloud providers should take caution
+        in providing huge resources for a short amount of time.
+\end{enumerate}
+
+\section{Conclusion}
+Workload prediction is a very important area for cloud providers and edge
+service providers. In this area because of the unpredictability present
+in the user-level applications, it is indeed hard to propose a deterministic
+algorithm for workload predictions unless we constrain our model in an
+exterme way which is not suitable for general workloads. AI shines greatly in
+this area because of the excellent prediction capability that AI provides us
+with we can predict workloads if we have a well trained model. But the
+challenge still remains in AI model resource utilization and network
+bandwidth consumption.
+
+
+% \bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+
+\begin{thebibliography}{1}
+    \bibitem{paper} Li, Yanan, et al.
+        "ELASTIC: Edge Workload Forecasting based on
+        Collaborative Cloud-Edge Deep Learning." (2023).
+    \bibitem{phd} Lu, Yao. Workload Prediction and Resource Management
+        for Energy Efficiency in Cloud Data Centres. Diss.
+        University of Leicester, 2022.
+\end{thebibliography}
+\end{document}

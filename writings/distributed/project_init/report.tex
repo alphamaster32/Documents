@@ -1,0 +1,81 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[framed]{ntheorem}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+\theoremstyle{nonumberplain}
+
+
+\title{Real-Time Containers: Communication and Mixed Criticality Concepts}
+\author{Hossein Afkar, Sina MirSattarian}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{Introduction}
+Containerization is a very important section in cloud computing and distributed
+systems. It provides a flexible way to isolate and deploy many software
+components. As Industry 4.0 becomes widespread, methods for deploying real-time
+containers in a distributed manner has become of importance in real-time
+communities. It could also be of interest to see how mixed criticality
+systems can be brought into the container world.
+
+\section{Challenges}
+Challenges regarding Real-Time containers includes but not limited to:
+\begin{itemize}
+    \item Communication between real-time containers.
+    \item I/O and networking behaviour may harm determinism.
+    \item Proper latency test and performance analysis of containers.
+    \item Process in different containers not aware of the shared resources
+        shared between them.
+    \item How mixed criticality concepts may enter the containers world
+\end{itemize}
+
+\section{Solutions}
+Solutions related to the challenges declared in this project may be presented
+as follow:
+\begin{itemize}
+    \item Use operating system concepts to create a performant IPC.
+    \item Use asynchronous syscalls like \textit{io\_uring} to handle
+        non-deterministic I/O.
+    \item Propse Tools to be created and benchmarking methods for containers.
+    \item Propose monitor Creation that is compliant with mixed-criticality
+        systems standards to ensure safe execution
+\end{itemize}
+Note that these solutions and challenges are done by some shallow literature
+review in the context of the main project we may try to propose different
+solutions or deem some challenges beyond the ability of this group.
+% \bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+
+\begin{thebibliography}{3}
+    \bibitem{one} Struhár, Václav, et al.
+        "Real-time containers:
+        A survey." 2nd Workshop on Fog Computing and the IoT (Fog-IoT 2020).
+        Schloss Dagstuhl-Leibniz-Zentrum für Informatik, 2020.
+    \bibitem{two}
+        Cinque, Marcello, et al.
+        "Virtualizing mixed-criticality systems:
+        A survey on industrial trends and issues."
+        Future Generation Computer Systems 129 (2022): 315-330.Z
+    \bibitem{three}
+        Reichenbach, Kelvin Andres.
+        "System-call offloading via Linux’io\_uring on the
+        Jailhouse partitioning hypervisor."
+\end{thebibliography}
+\end{document}

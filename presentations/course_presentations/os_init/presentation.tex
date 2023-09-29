@@ -1,0 +1,60 @@
+\documentclass{beamer}
+
+\usepackage{wrapfig}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+\usetheme{Boadilla}
+\usecolortheme{dolphin}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{sections/subsections in toc}[sections numbered]
+
+\title[Terabit Networking]
+{Towrads fast Ethernet and terabit speeds}
+\author[]{Hossein Afkar}
+\institute{University of Tehran}
+\date{\today}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\section{Introduction}
+\begin{frame}
+    \frametitle{Introduction}
+    Too many critical flaws in the Linux networking stack has push us
+    through rethinking the networking stacks that
+    includes the packet processing pipeline, sync or async I/O, and user or
+    kernel level processing of the packets.
+    In this project we try to gather information and propose methods
+    for increasing the linux or any other operating system networking speed but
+    the main emphasis will be on linux.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Emphasis}
+    In project we put our emphasis on these parts regarding the networking
+    stacks.
+    \begin{enumerate}
+        \item Frequently cited flaws in packet processing pipeline and Linux
+            networking stacks.
+        \item Synchronous and Asynchronous IO and new syscalls like 
+            \textit{io\_uring}.
+        \item How Linux networking stack operates with regards to the
+            scheduler and Timers and Interrupts.
+        \item Hardware capabilities required to achieve better performance.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Project Incentive}
+    The goal is to propose architectures and ways to imporve kernel networking
+    speeds that can be implemented in the linux kernel or any other kenrel.
+\end{frame}
+
+\begin{frame}
+  \centering \Large
+  \emph{Thank You For Your Attention}
+\end{frame}
+
+\end{document}

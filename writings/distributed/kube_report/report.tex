@@ -1,0 +1,167 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[framed]{ntheorem}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+\theoremstyle{nonumberplain}
+\newtheorem{definition}{Definition}
+
+\lstset{
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+
+\title{Kubernetes and FaaS platforms}
+\author{Hossein Afkar}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{Environment}
+In this section we will describe the environment that this computer assignment
+was deployed on.
+Kubernetes distribution of choice for this assignment was the \textit{k3s} by
+rancher. Reasoning for this distribution consist of its ease of use and simple
+one node deployment methods. By making helm accessible to us it also makes
+deploying out FaaS of choice easier. \\
+Our local machine is using \textit{arch linux} as the linux distribution of
+choice; therefore we can use \textit{AUR} to install k3s and its dependecies.
+After installing k3s we can start it using \textit{systemd}.
+Then we have to confiugure the \textit{kubectl} to use the k3s certificates.
+this is achieved by editing the \textit{yaml} file located at the home folder.
+By using the variables defined in the \textit{/etc/rancher/k3s.yaml} we can
+configure the \textit{kubectl} to authenticate with our local deployment of the
+kubernetes cluster. \\
+The next step is to choose a FaaS platform. We chose the \textit{OpenWhisk}
+as stated by the computer assignment description. The best way to deploy
+\textit{OpenWhisk} is to use \textit{Helm} to deploy it onto our single node
+cluster. OpenWhisk organiztion has provided helm charts in the orgs
+repositories for us to use but before that we should define a \textit{yaml}
+file that describes the environment and pass it the the helm for deployment.
+Luckily the repository was informative enough about the deploy and
+configuration process. \\
+We can deploy the \textit{OpenWhisk} using the following command command and
+check progress using \textit{kubectl}.
+\begin{lstlisting}[language=bash]
+helm install owdev openwhisk/openwhisk -n openwhisk --create-namespace -f kube/openwhisk.yml
+kubectl get pods -n openwhisk --watch
+\end{lstlisting}
+After that we are ready to deploy functions.
+In order to deploy function we should use the \textit{OpenWhisk} client that is
+called \textit{wsk}. Configuring \textit{wsk} is done through a file named
+\textit{~/.wskprops}. It should be suppiled with the api keys that are set as
+default by the helm chart. After this we supply our golang based functions to
+the openwhisk go action runner.
+We can add and run an action to the \textit{Openwhisk
+environment} using the following command.
+\begin{lstlisting}[language=bash]
+wsk -i action create ACTION_NAME ACTION
+wsk -i action invoke ACTION_NAME --result
+\end{lstlisting}
+This will print the json results provided by the invoked function.
+Our functions are pretty simple One functions invokes another with an
+api call supplying a rest post request to the invoked function with the message
+and the timestamp. The invoked funtion then will supplies the callee with
+another json message with timestamp and exits gracefully. The callee the
+returns the results and ends the deployment as intended. \\
+An example of the client function is stated as follow:
+\begin{lstlisting}[language=go]
+const (
+	Url   = "https://172.16.157.210:31001/api/v1/namespaces/_/actions/server?blocking=true&result=true"
+	Token = "Basic MjNiYzQ2YjEtNzFmNi00ZWQ1LThjNTQtODE2YWE0ZjhjNTAyOjEyM3pPM3haQ0xyTU42djJCS0sxZFhZRnBYbFBrY2NPRnFtMTJDZEFzTWdSVTRWck5aOWx5R1ZDR3VNREdJd1A="
+)
+
+type Request struct {
+	Msg       string `json:"message"`
+	Timestamp string `json:"timestamp"`
+}
+
+// Main is the function implementing the action
+func Main(obj map[string]interface{}) map[string]interface{} {
+	msg := make(map[string]interface{})
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req := Request{
+		Msg:       "Hello World! From Client.",
+		Timestamp: time.Now().Format(time.RFC3339Nano),
+	}
+
+	b, err := json.Marshal(req)
+	if err != nil {
+		msg["err"] = err
+		return msg
+	}
+
+	r, err := http.NewRequest("POST", Url, bytes.NewBuffer(b))
+	if err != nil {
+		msg["err"] = err
+		return msg
+	}
+	r.Header.Add("Content-Type", "application/json")
+	r.Header.Add("Authorization", Token)
+	client := &http.Client{}
+	resp, err := client.Do(r)
+	if err != nil {
+		msg["err"] = err
+		return msg
+	}
+
+	defer resp.Body.Close()
+
+	var server_resp Request
+	//json.Unmarshal(b, &server_resp)
+	json.NewDecoder(resp.Body).Decode(&server_resp)
+
+	// Json returning logic
+	msg["resp"] = server_resp
+	msg["sent"] = req.Timestamp
+	// encode the result back in json
+	return msg
+}
+
+\end{lstlisting}
+The server function behaves similarly and supplies a json object of similar
+semantics to the client.
+
+\section{Conculsion}
+In this computer assignment we deployed a local, single node cluster onto our
+local machine, Familiaring ourselves with the kubernetes environment and using
+\textit{kubectl} to manage a local kubernetes cluster. \\
+After that by using a helm chart to deploy our FaaS platform of choice we were
+introduced to the ease of using helm charts.
+Using OpenWhisk was by far different from our usual programming and debugging
+environment and taugh us many things. \\
+In the end this assignment follows suit from the last one that was made to
+illustrate the container communication platfroms. In this assignment we used
+the rest api to make connections between functions. Invoking functions without
+warmup induces some overhead to our overall setup but makes the overall\
+deployment easier. If our function is rarely called and
+does not communicate a great amount of data, we can consider using a FaaS
+platform for the ease of deployment. It can also help us by bringing functions
+closer to the users in different geographical environments.
+platforma
+
+
+
+% \bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+\end{document}

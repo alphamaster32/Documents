@@ -1,0 +1,158 @@
+\documentclass[a4paper, 10pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[framed]{ntheorem}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+\theoremstyle{nonumberplain}
+
+
+\title{Real-time Containers: Communication and Mixed-Criticality Concepts}
+\author{Hossein Afkar \and Sina MirSattarian}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{Preface}
+This project places its focus on a real-time container survey which states
+some of the future works prospective of this area of interest. \\
+The list of challenges of the real-time container based virtualization is
+stated as follow:
+\begin{itemize}
+    \item Lack of Tools for real-time container management.
+    \item Communication between real-time contianers.
+\end{itemize}
+The survey stated various challenges regarding the real-time containers but we
+limited our area of research to mixed-critical containers and real-time
+containers communications.
+
+\section{Shimmy: Shared Memory Channels for High Performance Inter-Container
+Communication}
+With the adoption of the cloud technologies in the IoT, the need of
+high performance communication between a fleet of containers has surfaced. \\
+Application developers are rethinking their designs and migrating
+towards the microservice architectures, in which the communications plays
+in important role in. \\
+By studying this paper we tend to familiarize ourselves with a sample
+architecture surrounding shared memory communications in containers. In order 
+to make this communication channel real-time, we need to apply more control
+mechanisms on this communication channels. \\
+Architecture that was proposed by this paper was based on allocating memory
+using shmget() systemcall. By allocating this memory and passing the shm\_id
+to the container, we can use this shared memory and initialize it for message
+passing mechanisms using shared memory channels. This paper states that an API
+is needed to fully utilize this technique. Also docker makes this easier by 
+the ipc flag which makes the container share the same ipc namespace as the main
+host thus making the communications easier. After reading this papers
+architectures we must enable this architectures to become real-time which is
+due for further stages of this project.
+
+\section{Achieving Isolation in Mixed-Criticality Industrial Edge Systems
+with Real-time Containers}
+The emergence of edge computing and the Industrial Internet of Things (IIoT) has
+led to the deployment of complex, distributed systems in industrial settings.
+These systems often integrate multiple applications with different levels of
+criticality, which poses challenges for ensuring safety, security, and performance.
+In this context, achieving isolation between applications is a key requirement to
+prevent faults and failures from propagating across the system. This technical
+report summarizes the paper "Achieving Isolation in Mixed-Criticality Industrial
+Edge Systems with Real-Time Containers" by Haddad et al., which proposes a
+solution based on real-time containers to address the isolation challenges in
+mixed-criticality industrial edge systems. \\
+The paper defines a system model for mixed-criticality industrial edge systems,
+which includes three types of components: sensors, actuators, and controllers.
+Each component is associated with one or more applications with different levels
+of criticality, ranging from safety-critical to non-critical. The paper identifies two
+main challenges for achieving isolation in this context: (1) the need to prevent
+faults and failures from propagating across applications and (2) the need to
+ensure timely and predictable execution of critical applications. \\
+To address these challenges, the paper proposes the use of real-time containers,
+which provide isolation between applications at the operating system level. Real-
+time containers are based on the concept of virtualization, which allows multiple
+operating systems to run on a single physical machine. Real-time containers use
+hardware virtualization to create isolated environments for each application,
+which prevents faults and failures from propagating across applications.
+The paper proposes a specific implementation of real-time containers, based on
+the Xen hypervisor and the Xtratum real-time operating system. This
+implementation provides fine-grained control over the allocation of resources,
+such as CPU time, memory, and I/O bandwidth, to each application. This ensures
+that critical applications receive the resources they need to meet their timing
+requirements, while non-critical applications are prevented from interfering with
+the execution of critical applications. \\
+The paper evaluates the proposed solution through experiments on a hardware-
+in-the-loop simulation platform. The experiments compare the performance of
+the real-time container-based system with a traditional approach based on a
+monolithic operating system. The results show that the real-time container-based
+system provides better isolation between applications and better predictability of
+timing behavior, even under heavy load conditions. \\
+The paper presents a solution based on real-time containers to address the
+isolation challenges in mixed-criticality industrial edge systems. The proposed
+solution provides fine-grained control over the allocation of resources to each
+application, which ensures that critical applications receive the resources they
+need to meet their timing requirements. The evaluation results demonstrate the
+effectiveness of the proposed solution in providing better isolation and
+predictability compared to traditional approaches. Overall, the proposed solution
+provides a promising approach for addressing the isolation challenges in mixed-
+criticality industrial edge systems.
+
+\section{Project Progress}
+As stated in the project proposal, there are two main challenges regarding
+the real-time container concepts. These challenges are real-time 
+container communication and mixed-criticality concepts.
+In this report, we read and analyzed two technical papers and one survey.
+In the first paper, which was a survey it was made clear that the real-time
+containers need more research in communication and mixed-criticality concepts.
+However as we went forward in our literature review, we found out that
+the mixed-criticality concepts are a very well-researched topic and may not
+be relevant in the context of the survey and future works and our ideas and
+challenges stated in the survey was already done by a the team that made the
+survey on real-time containers.
+By Studying the architecture of an example of communication between real-time
+containers it is possible to move forward in this direction and combine
+real-time concepts in communications between containers.
+Several papers have been published on how to make bandwidth allocation between
+processes deterministic and how to schedule the memory bandwidth needs of the
+process that are isolated in a virtual machine environment. By utilizing
+Those concepts we can try to propose an architecture for real-time container
+communications and try to find out about ways to profile and trace such
+properties. We can also try to implement these methods at the kernel level
+and change the kernel scheduler to include the changes required to make cgroups
+processes real-time. In the next report we will try to read papers on
+bandwidth control and scheduling in order to be prepared to contribute an
+architecture for real-time containers communications.
+
+
+
+% \bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+
+\begin{thebibliography}{2}
+    \bibitem{shimmy} Abranches, Marcelo, and Sepideh Goodarzy.
+        "Shimmy: Shared memory channels for high performance inter-container
+        communication." USENIX Workshop on Hot Topics in Edge Computing
+        (HotEdge). 2019.
+    \bibitem{mcs}
+        Barletta, Marco, et al. "Achieving isolation in mixed-criticality
+        industrial edge systems with real-time containers." 34th Euromicro
+        Conference on Real-Time Systems (ECRTS 2022). Schloss
+        Dagstuhl-Leibniz-Zentrum für Informatik, 2022.
+    \bibitem{survey}
+        Struhár, Václav, et al. "Real-time containers: A survey."
+        2nd Workshop on Fog Computing and the IoT (Fog-IoT 2020).
+        Schloss Dagstuhl-Leibniz-Zentrum für Informatik, 2020.
+\end{thebibliography}
+\end{document}

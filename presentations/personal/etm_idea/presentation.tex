@@ -1,0 +1,56 @@
+\documentclass{beamer}
+
+\usepackage{wrapfig}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage[export]{adjustbox}
+\usepackage{svg}
+
+\usetheme{Boadilla}
+\usecolortheme{dolphin}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{sections/subsections in toc}[sections numbered]
+
+\setbeameroption{hide notes}
+% \setbeameroption{show only notes}
+% \setbeameroption{show notes on second screen=right}
+
+\title[Adaptive Embedded Trace]
+{Adaptive Embedded Trace: Assessment of Ideas}
+\author[]{Hossein Afkar}
+\institute{DRTS Lab}
+\date{\today}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+    \frametitle{Outline}
+    \tableofcontents[hideallsubsections]
+\end{frame}
+
+\AtBeginSection[]
+{
+    \begin{frame}{Outline}
+        \tableofcontents[currentsection]
+    \end{frame}
+}
+
+\section{Preface}
+\begin{frame}
+    % \note{}
+    \frametitle{Preface}
+\end{frame}
+
+\section{Embedded Trace in Cyber-Physical Systems}
+\section{Adaptability}
+\section{eBPF: Extended Berekley Packet Filter}
+\section{Linux Kernel: Performance Observability Tools}
+
+\begin{frame}
+  \centering \Large
+  \emph{Thank You For Your Attention}
+\end{frame}
+
+\end{document}

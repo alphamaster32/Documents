@@ -1,0 +1,148 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage[framed]{ntheorem}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+\theoremstyle{nonumberplain}
+\newtheorem{definition}{Definition}
+
+\title{Reliable and Efficient Concurrent Synchronization for
+Embedded Real-Time Software}
+\author{Hossein Afkar}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{Preface}
+When using the most recent hardware, the most important feature that comes to
+mind is the multi-threading capability of the said hardware. In order to use
+the maximum capacity of the hardware, we need to make use of the features that
+is available in hardware so the matter of multi-threaded programming is of
+utmost importance to us as the system designers. In order to synchronize
+multiple threads that are running in a system, we need to design and use
+synchronization primitives that are available to us in the context of the
+hardware and software. When using the traditional synchronizations mechanisms
+like semaphores, we need to keep in mind that these kinds of synchronizations
+are blocking and may affect the process prority assigned by the system
+designer. One kind of problem that may occur using the traditional
+synchronization primitives it the issue of priority inversion. \\
+In 1997 the mars pathfinder suffered from a similiar issue when a low priority
+task that was collecting meterlogical data blocked the bus that a high priority
+task needed using a mutex. Priority inheritance is the method that is used
+when handling mutual exclusive access to resources present on the system.
+But using a mutex is not always the answer when designing systems. Using 
+methods that utilize lock free data structures and algorithms is generally
+prefered in the context of embedded systems as it will satisty the need to
+use priority inheritance and thus lowering the system overhead. \\
+In this project we analyze two lock free algorithm for a vector shared by a
+number of threads. We also describe the methods that is available in the
+hardware to make such algorithms possible and how these methods get used in a
+general purpose systems programming language like C++.
+
+\section{Introduction}
+
+In this section we present an overview of the algoritms presented by D. Dechev
+et al. \cite{cas}. As stated in the paper data structures like linked lists,
+
+\subsection{Lock-free Dynamically Resizable Arrays}
+As stated in the paper data structures like linked lists, double-ended queues,
+stacks, hash tables, and binary search trees are studied in previous works but
+despite the widespred use of the STL vector which is dynamically resizable
+array, the problem of design and implementation of a dynamic lock-free array
+has not yet been discussed. \\
+The vector random access, data locality, and dynamic memory management poses
+serious challenges for its non-blocking implementation.
+
+\pagebreak
+
+Therefore the paper proposed a set of design principles to guide the
+implementation.
+\begin{itemize}
+    \item thread-safety
+    \item lock-freedom
+    \item portablility
+    \item easy-to-use interfaces
+    \item high level of parallelism
+    \item minimal overhead
+    \item simplicity
+\end{itemize}
+Algorithms proposed in this section are heavily dependant on the atomics
+capability of the compiler and hardware therefore portability might be
+compromised in architectures like RISCV architectures without the atomic
+extentions but in spite of that multi-threading capability is not really
+possible without the help of hardware and thus any hardware capable of
+multi-threading must support the atomic instructions and instructions
+controlling the memory ordering.
+
+\subsection{Software Transactional Memory}
+
+\section{Hardware Capabilites and Memory Ordering}
+Hardware plays an important role in implemeting the software algorithms
+presented in this project. In order to understand how hardware can help us
+implement these algorithms we need to have a clear view of how hardware
+manages memory and how it helps us achieve memory ordering.
+
+\subsection{Memory Ordering}
+In order to write correct and effiecient programs that use synchronised
+primitives we need to have a clear understanding of memory ordering. This view
+translates to how writes and reads are handled between different processes.
+This model presents a way to eliminate the gap between the programmer expected
+results an how the hardware process the result. \\
+There is a formal definition of the sequential consistency provided by
+Lamport\cite{ordering}:
+
+\begin{definition}[Sequantial Consistency]
+    [A multiprocessor system is sequentially consistent if] the result of any
+    execution is the same as if the operations of all the processors were
+    executed in some sequential order, and the operations of each individual
+    processor appear in this sequence in the order specified by its program.
+\end{definition}
+
+This definition states that in order to achieve sequential consistency some
+constrains should be placed on the hardware and compilers because reordering
+the writes and reads in the program order can mess up the seqential consistent
+view of the memory. This constrains state that
+\begin{enumerate}
+    \item A processor must ensure that memory operations are addressed in the
+        program order.
+    \item In a cache-based system all writes in the same location must be
+        serialized and the value of write is not returned by a read until all
+        cache line invalidates or updates generated by this write are
+        acknowledged.
+\end{enumerate}
+
+
+% \bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+\begin{thebibliography}{10}
+    \bibitem{cas}
+        D. Dechev,P. Pirkelbauer, and B. Stroustrup.
+        Lock-free Dynamically Resizable Arrays.
+        In A. A Shvartsman, editro, OPODIS,
+        volume 4305 of Lecture Notes in Computer Science,
+        pages 142-156.
+        Springer 2006.
+    \bibitem{fraser}
+        K. Fraser and T. Harris. Concurrent programming without locks.
+        ACM Trans. Comput. Syst., 25(2):5 2007.
+    \bibitem{ordering}
+        Adve, Sarita V., and Kourosh Gharachorloo.
+        "Shared memory consistency models: A tutorial."
+        computer 29.12 (1996): 66-76.
+\end{thebibliography}
+
+\end{document}

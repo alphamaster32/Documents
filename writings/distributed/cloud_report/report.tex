@@ -1,0 +1,85 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[framed]{ntheorem}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+\theoremstyle{nonumberplain}
+
+
+\title{Contention And Resource Management In Cloud Infrastructure}
+\author{Hossein Afkar}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{Introduction}
+In container technology, we are promised with low-overhead and ease
+of deployment. Containers rely on kernel-provided tools like
+\textit{namespaces} and \textit{cgroups} to provide isolation and manage
+resources. Docker container management platform exploits such features
+to provide container solutions. However, services that are run in
+data centers require methods like load balancing, resource allocation, and 
+contention management to work efficiently and correctly. \\
+Docker swarm is the name of the technology that orchestrates containers
+across different nodes. In the paper, \cite{paper} questions are asked
+about interferences and contention of resources when running
+distributed applications in containers and how to implement them.
+
+\section{Ideas and Methods}
+In the afforementioned paper there are three questions.
+The first question concerns itself with the interference and asks whether
+these interferences affect performance in any way. \\
+In order to synthesise a test case for this question this paper used instances
+in \textit{AWS} and \textit{CloudFormation} to form a docker swarm cluster. \\
+After crafting tests it can be made clear that interfernce exists and is
+present and docker swarm does nothing to prevent or migitate this issue.
+The second question tries to find value for implementation of a contention
+manager in container orchestration software. This question is answered with
+a prototype in mind. This prototype shows that being aware of the dynamic
+resource utilization in the nodes and using a better placement strategy
+with a naive algorithm can lead to 1.8\% and 1.1\% on YCSB1 and YSCB2
+benchmarks. \\
+The final question is about how to implement a resource-aware container engine.
+This paper proposes two machine learning based algorithms to find good
+placement for contaniner scheduling and placement into the cluster node.
+In all of the tests proposed algorithms outperformed random and binpack
+placement algorithms. 
+
+\section{Conclusion}
+Contention and resource management are important issues in cloud
+infrastructures. To get the full performance for the applications packaged
+into containers we need to place them in nodes concerning the IO and CPU
+utilization that the node is experiencing at the moment. \\
+Container orchestration platforms like k8s and Docker Swarm must have insight
+into the types of applications that are packaged and if it is resource
+intensive in IO or CPU so that they can make a decision based on the dynamic
+resource available at the moment. \\
+Also looking at this problem statically may not be the best idea.
+
+
+
+% \bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+
+\begin{thebibliography}{1}
+    \bibitem{paper} Chiang, Ron C.
+        "Contention-aware container placement strategy for docker swarm with
+        machine learning based clustering algorithms."
+        Cluster Computing (2020): 1-11.
+\end{thebibliography}
+\end{document}

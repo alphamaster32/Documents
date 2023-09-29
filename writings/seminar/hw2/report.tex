@@ -1,0 +1,82 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{xepersian}
+\settextfont[Scale=1]{HM FNazli}
+\setlatintextfont[Scale=.9]{Noto Sans}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+
+\title{
+    تمرین شماره دو
+}
+\author{حسین افکار}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+
+\section{چکیده}
+در این مقاله بخش‌های
+\lr{Background}
+،
+\lr{Purpose}
+،
+\lr{Results}
+، و
+\lr{Conclusion}
+وجود دارد
+
+\lr{
+    \begin{itemize}
+        \item Background: Memory bandwidth in modern multi-core platforms
+        is highly variable for many reasons and is a big challenge
+        in designing real-time systems as applications are increasingly
+        becoming more memory intensive.
+        \item Purpose: In this work, we proposed,
+        designed, and implemented an efficient memory bandwidth reservation system, that we call MemGuard. MemGuard distinguishes
+        memory bandwidth as two parts: guaranteed and best effort.
+        \item Results:  It
+        provides bandwidth reservation for the guaranteed bandwidth
+        for temporal isolation, with efficient reclaiming to maximally
+        utilize the reserved bandwidth. It further improves performance
+        by exploiting the best effort bandwidth after satisfying each core’s
+        reserved bandwidth.
+        \item Conclusion: MemGuard is evaluated with SPEC2006
+        benchmarks on a real hardware platform, and the results
+        demonstrate that it is able to provide memory performance
+        isolation with minimal impact on overall throughput.
+    \end{itemize}
+}
+
+در چکیده این مقاله
+\lr{Methodology}
+وجود ندارد و همچنین بهتر بود دلایل بهتری در بخش
+\lr{Purpose}
+برای مقاله آورده می‌شد که کمک می‌کرد تا هدف این مقاله علاوه بر ساخت ابزار
+به شکل بهتری مشخص شود.
+
+\section{کلمات کلیدی}
+\lr{
+    \begin{itemize}
+        \item Bandwidth
+        \item Random access memory
+        \item Multicore processing
+        \item Real-time systems
+        \item Regulators
+        \item Benchmark testing
+        \item Throughput
+    \end{itemize}
+}
+\bibliographystyle{abbrv}
+% \bibliography{references}  % need to put bibtex references in references.bib 
+\end{document}
