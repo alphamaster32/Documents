@@ -39,14 +39,97 @@
 
 \section{Preface}
 \begin{frame}
-    % \note{}
     \frametitle{Preface}
+    \begin{itemize}
+        \item Embedded Trace in Cyber-Physical Systems.
+        \item Exploring Adaptability.
+        \item eBPF: What we already have in kernel space via software.
+        \item Performance Observability Tools in Linux Kernel.
+    \end{itemize}
 \end{frame}
 
 \section{Embedded Trace in Cyber-Physical Systems}
+\begin{frame}
+    \frametitle{Introduction}
+    \begin{itemize}
+        \item Advanced embedded system technology is one of the key
+            driving forces behind the rapid growth
+            of Cyber-Physical System (CPS) applications.
+        \item Advanced architectures create challenges for testing and
+            verification.
+            \begin{itemize}
+                \item Observability.
+                \item Non-intrusiveness
+            \end{itemize}
+        \item A promising technology to address the observability issue is
+            Embedded Trace (ET).
+            \begin{itemize}
+                \item Opens the window to the systems behaviour while
+                    executing software.
+                    \begin{itemize}
+                        \item Revealing memory access patterns
+                        \item Execution control
+                        \item Data flow
+                        \item Protocol sequences
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Noted Excerpts From The Paper}
+    \begin{itemize}
+        \item Data-Flow messages are large and can consume trace bandwidth.
+        \item ETM evolution:
+            \begin{itemize}
+                \item ETMv1 and ETMv2 report the pipeline state in a cycle by
+                    cycle basis.
+                \item ETMv3 abolishes pipeline state and introduces P-Header
+                    packets that represent the state of the instructions.
+                \item ETMv3 to ETMv1 only output the information of the flow of
+                    execution when it can not be inferred from the execution
+                    image.
+                \item Observeability tradeoffs can be solved using ITM.
+                \item ETMv4 reports the cancellation or completion of
+                    speculative code execution.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
 \section{Adaptability}
+\begin{frame}
+    \frametitle{Exploring What It Means to Adapt}
+    \begin{itemize}
+        \item Adaptability is defined in relation to a feature.
+        \item Fault detection and various online error detection methods come
+            to mind when mentioning adaptability.
+        \item In order to be adaptable we should define what we need to adapt
+            for
+            \begin{itemize}
+                \item Adapt to ?
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    \frametitle{Online Error Detection Through Trace Infrastructure in
+    ARM Microprocessors}
+    \begin{itemize}
+        \item ASD
+    \end{itemize}
+\end{frame}
 \section{eBPF: Extended Berekley Packet Filter}
-\section{Linux Kernel: Performance Observability Tools}
+\begin{frame}
+    \frametitle{Extended Berekley Packet Filter}
+    \begin{itemize}
+        \item Extended berkekley packet filter is a tracing solution present
+            in the linux kernel.
+        \item BPF is an emulated machine that aids us to run controlled
+            programs in kernel space.
+    \end{itemize}
+\end{frame}
+\section{Memory Observability and Bandwidth Control}
+\begin{frame}
+    \frametitle{ASD}
+\end{frame}
 
 \begin{frame}
   \centering \Large
