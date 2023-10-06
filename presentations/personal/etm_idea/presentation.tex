@@ -113,8 +113,31 @@
     \frametitle{Online Error Detection Through Trace Infrastructure in
     ARM Microprocessors}
     \begin{itemize}
-        \item ASD
+        \item there is a growing interest in the use of COTS microprocessors
+            in space applications.
+        \item Particularly for small satellites with tight budget constraints
+            and missions that require high processing power.
+        \item Experimental results demonstrate high accuracy with up to 95\% 
+            of observed errors detected in a commercial microprocessor with
+            no hardware modification using ETM and ITM.
     \end{itemize}
+\end{frame}
+\begin{frame}
+    \frametitle{Hardware Accelerated Trace Analysis for Compiler Optimizations}
+    \begin{itemize}
+        \item Master thesis from the ETH Zurich
+        \item Works on Profile Guided Optimizations present in compilers.
+        \item Uses ETMv4 for trace collection.
+        \item Proposes FPGA based trace collection.
+            \begin{itemize}
+                \item Increased data collection reliablity
+                \item Increased Throughput.
+                \item On-Chip data processing.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    \frametitle{asd}
 \end{frame}
 \section{eBPF: Extended Berekley Packet Filter}
 \begin{frame}
@@ -128,7 +151,74 @@
 \end{frame}
 \section{Memory Observability and Bandwidth Control}
 \begin{frame}
-    \frametitle{ASD}
+    \frametitle{MemGuard: Memory Bandwidth Reservation System for Efficient
+    Performance Isolation in Multi-core Platforms}
+    \begin{itemize}
+        \item Memory bandwidth in modern multi-core platforms is highly
+            variable
+        \item And it is a big challenge in designing real-time systems as
+            applications are becoming increasingly more memory intensive.
+        \item MemGuard:
+            \begin{itemize}
+                \item Reserve memory for every core to achieve temporal
+                    correctness.
+                \item Reclaim unused bandwidth to maximize performance.
+                \item Divides bandwidth to guranteeed and best-effort.
+                \item Mainly target soft real-time systems
+                    (Unless reclaimation is disabled).
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Motivating Example: IPC in a Shared Bandwidth Multi-core System}
+    % Fixme: Figure
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.80\columnwidth]{memguard.png}
+        \caption{IPC slowdown of foreground (X-axis) and background
+        task (470.lbm) on a dual-core configuration}
+        \label{fig:TraceEnable}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Problems of Shared Memory in Multi-core Systems}
+    \begin{itemize}
+        \item In embedded systems, task execution time is increasingly more
+            dependent on the way that memory resources are allocated among
+            cores.
+        \item Allocation Schemes used by the allocator does not take into
+            account the addresses of the allocated chunks.
+        \item Results indicate that memory bandwidth is very different
+            compared to CPU bandwidth, in the sense that maximum achievable
+            bandwidth is not fixed but highly variable depending on access
+            location of each memory request and on the state of DRAM subsystem.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{MemGuard: How its Done}
+    \begin{itemize}
+        \item Regulate each core request rate.
+        \item Programs PMC to generate an interrupt in which it deschedules
+            tasks unitl the next hyperperiod.
+        \item The rest of their algorithm is focused on bandwidth reuse and
+            repurposing for different cores.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{What can we do better using ETM}
+    \begin{itemize}
+        \item With ETM we are aware of the data address of memory acesses
+            \begin{itemize}
+                \item Make a more accurate estimation of the DRAM service rate.
+                \item Divide DMA and memory accesses.
+                \item Make assumption on Virtual Machines making different
+                    accesses.
+            \end{itemize}
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
