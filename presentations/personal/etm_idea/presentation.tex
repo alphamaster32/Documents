@@ -142,7 +142,23 @@
         \item Power
     \end{itemize}
 \end{frame}
-\section{Memory Observability and Bandwidth Control}
+\section{Temporal Independece for Memory Subsystem}
+\begin{frame}
+    \frametitle{Temportal Independece for Memory Subsystems}
+    \begin{itemize}
+        \item Convectional memory controllers are not designed to handle
+            mixed-criticality software.
+        \item In these cases WCET is defined for all possible memory
+            transcations which is far tighter than the normal case of the
+            single-core processors.
+        \item Different strategies are used such as:
+            \begin{itemize}
+                \item Designing custom real-time controllers.
+                \item Software based strategies using interrupts like MemGuard.
+                \item Transactional Memory.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
 \begin{frame}
     \frametitle{MemGuard: Memory Bandwidth Reservation System for Efficient
     Performance Isolation in Multi-core Platforms}
