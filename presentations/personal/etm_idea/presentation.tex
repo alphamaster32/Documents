@@ -15,8 +15,8 @@
 % \setbeameroption{show only notes}
 % \setbeameroption{show notes on second screen=right}
 
-\title[Adaptive Embedded Trace]
-{Adaptive Embedded Trace: Assessment of Ideas}
+\title[Embedded Trace]
+{Embedded Trace: Assessment of Ideas}
 \author[]{Hossein Afkar}
 \institute{DRTS Lab}
 \date{\today}
@@ -42,8 +42,8 @@
     \frametitle{Preface}
     \begin{itemize}
         \item Embedded Trace in Cyber-Physical Systems.
-        \item Exploring Fault Detection.
-        \item Memory Bandwidth control.
+        \item Temporal Isolation for Memory Subsystem.
+        \item Measurement Based Timing Analysis.
     \end{itemize}
 \end{frame}
 
@@ -85,40 +85,10 @@
                     cycle basis.
                 \item ETMv3 abolishes pipeline state and introduces P-Header
                     packets that represent the state of the instructions.
-                \item ETMv3 to ETMv1 only output the information of the flow of
-                    execution when it can not be inferred from the execution
-                    image.
                 \item Observeability tradeoffs can be solved using ITM.
                 \item ETMv4 reports the cancellation or completion of
                     speculative code execution.
             \end{itemize}
-    \end{itemize}
-\end{frame}
-\section{Fault Detection and Adaptation}
-\begin{frame}
-    \frametitle{Exploring What It Means to Adapt}
-    \begin{itemize}
-        \item Adaptability is defined in relation to a feature.
-        \item Fault detection and various online error detection methods come
-            to mind when mentioning adaptability.
-        \item In order to be adaptable we should define what we need to adapt
-            for
-            \begin{itemize}
-                \item Adapt to ?
-            \end{itemize}
-    \end{itemize}
-\end{frame}
-\begin{frame}
-    \frametitle{Online Error Detection Through Trace Infrastructure in
-    ARM Microprocessors}
-    \begin{itemize}
-        \item there is a growing interest in the use of COTS microprocessors
-            in space applications.
-        \item Particularly for small satellites with tight budget constraints
-            and missions that require high processing power.
-        \item Experimental results demonstrate high accuracy with up to 95\% 
-            of observed errors detected in a commercial microprocessor with
-            no hardware modification using ETM and ITM.
     \end{itemize}
 \end{frame}
 \begin{frame}
@@ -135,16 +105,9 @@
             \end{itemize}
     \end{itemize}
 \end{frame}
+\section{Temporal Isolation for Memory Subsystem}
 \begin{frame}
-    \frametitle{Categorizing Fault in Embededd Systems}
-    \begin{itemize}
-        \item Timing Faults
-        \item Power
-    \end{itemize}
-\end{frame}
-\section{Temporal Independece for Memory Subsystem}
-\begin{frame}
-    \frametitle{Temportal Independece for Memory Subsystems}
+    \frametitle{Temportal Isolation for Memory Subsystems}
     \begin{itemize}
         \item Convectional memory controllers are not designed to handle
             mixed-criticality software.
@@ -227,6 +190,12 @@
                 \item Make assumption on Virtual Machines making different
                     accesses.
             \end{itemize}
+        \item But:
+            \begin{itemize}
+                \item Create contention on the bus.
+                \item Interrupt based high overhead task to analyze the inputs.
+                \item Better ways exist now. (MPAM and Arm QoS)
+            \end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -241,7 +210,6 @@
             algorithms should be defined in response to such hardware.
     \end{itemize}
 \end{frame}
-
 \begin{frame}
     \frametitle{Arm Memory System Resource Partitioning and Monitoring (MPAM)
     Extension}
@@ -262,7 +230,6 @@
             \end{itemize}
     \end{itemize}
 \end{frame}
-
 \begin{frame}
     \begin{figure}
         \centering
@@ -271,7 +238,85 @@
         \label{fig:MPAM}
     \end{figure}
 \end{frame}
-
+\section{Measurement Based Timing Analysis}
+\begin{frame}
+    \frametitle{Measurement Based Timing Analysis: Trying An Hybrid Approach}
+    \begin{itemize}
+        \item Common approaches in WCET analysis deal with static analysis.
+        \item Hardware models became complicated therefore presenting a model
+            of hardware to the static analyzers is increasingly harder now.
+        \item Measurement based timing analysis is an hybrid approach in which
+            the static analysis is combined with a dynamic part.
+        \item Measuring basic blocks can be done by using the ETM.
+        \item Using hardware we can eliminate overhead that is incurred during
+            instrumentation.
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    \frametitle{MBTA: How its Done}
+    \begin{itemize}
+        \item Analysis Phase:
+            \begin{itemize}
+                \item Construct CFG.
+            \end{itemize}
+        \item Measurement Phase
+            \begin{itemize}
+                \item Measure basic block time using trace modules.
+            \end{itemize}
+        \item Calculation Phase:
+            \begin{itemize}
+                \item Find the path.
+                \item Do ILP.
+            \end{itemize}
+    \end{itemize}
+    Challenges include:
+    \begin{itemize}
+        \item Combining elements of static analysis into this hybrid approach.
+        \item Test vector generation and path finding.
+        \item Enforcing predictable hardware state.
+        \item Context-sensitive path analysis.
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.90\columnwidth]{wcet.png}
+        \caption{An Hybrid MBTA Workflow Using Waypoint Graphs}
+        \label{fig:wcet}
+    \end{figure}
+\end{frame}
+\begin{frame}
+    \frametitle{MBTA for Multi-core Architectures}
+    \begin{itemize}
+        \item Hybrid methods for multicore architectures revolve around having
+            extra observability inside cache and bus memory subsystems.
+        \item Most others rely on architectural accurate simluators.
+        \item ETM provides us with data addresses and values written in each
+            memory address with the added cost of increased trace bandwidth.
+        \item Some cache monitoring can be achieved using PMCs and we can also
+            read the cache using JTAG but we are not sure about the write
+            capability.
+        \item Sources of unpredictability in analysis:
+            \begin{itemize}
+                \item Shared Caches, evictions and buffers.
+                \item Shared main memory and controllers.
+                \item Shared interconnect and buses, arbitration.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+\begin{frame}
+    \frametitle{Future Meeting Ideas}
+    \begin{itemize}
+        \item ETMv4
+        \item Narrow down and dive into system model and methods required for hybrid analysis
+        \item Retina: Processor Observability and Instrumentation Toolchain
+            \begin{itemize}
+                \item Access and document the whole ARM AP, DP and coresight environment.
+                \item Source-level (AST and debugging symbols) or binary-level Analysis (IL).
+                \item External Hardware design via FPGA for ETM signal processing.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
 \begin{frame}
   \centering \Large
   \emph{Thank You For Your Attention}
