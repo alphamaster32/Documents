@@ -1,0 +1,23 @@
+digraph "DDG for 'foo.'" {
+	label="DDG for 'foo.'";
+
+	Node0x55c98aa56520 [shape=record,label="{\<kind:root\>\nroot\n}"];
+	Node0x55c98aa56520 -> Node0x55c98aa49fb0[label="[rooted]"];
+	Node0x55c98aa56520 -> Node0x55c98aa50d50[label="[rooted]"];
+	Node0x55c98aa56520 -> Node0x55c98aa50ea0[label="[rooted]"];
+	Node0x55c98aa56520 -> Node0x55c98aa51060[label="[rooted]"];
+	Node0x55c98aa51060 [shape=record,label="{\<kind:single-instruction\>\n  br label %6, !llvm.loop !6\n}"];
+	Node0x55c98aa50ea0 [shape=record,label="{\<kind:single-instruction\>\n  br label %12\n}"];
+	Node0x55c98aa50d50 [shape=record,label="{\<kind:multi-instruction\>\n  %10 = load i32, ptr %2, align 4\n  %11 = mul nsw i32 %10, 20\n  store i32 %11, ptr %3, align 4\n}"];
+	Node0x55c98aa49fb0 [shape=record,label="{\<kind:single-instruction\>\n  %7 = load i32, ptr %4, align 4\n}"];
+	Node0x55c98aa49fb0 -> Node0x55c98aa4a020[label="[def-use]"];
+	Node0x55c98aa49fb0 -> Node0x55c98aa50f10[label="[consistent input [S|<]!]"];
+	Node0x55c98aa49fb0 -> Node0x55c98aa50ff0[label="[consistent anti [S|<]!]"];
+	Node0x55c98aa50f10 [shape=record,label="{\<kind:single-instruction\>\n  %13 = load i32, ptr %4, align 4\n}"];
+	Node0x55c98aa50f10 -> Node0x55c98aa50f80[label="[def-use]"];
+	Node0x55c98aa50f10 -> Node0x55c98aa50ff0[label="[consistent anti [S|<]!]"];
+	Node0x55c98aa50f80 [shape=record,label="{\<kind:single-instruction\>\n  %14 = add nsw i32 %13, 1\n}"];
+	Node0x55c98aa50f80 -> Node0x55c98aa50ff0[label="[def-use]"];
+	Node0x55c98aa50ff0 [shape=record,label="{\<kind:single-instruction\>\n  store i32 %14, ptr %4, align 4\n}"];
+	Node0x55c98aa4a020 [shape=record,label="{\<kind:multi-instruction\>\n  %8 = icmp slt i32 %7, 10\n  br i1 %8, label %9, label %15\n}"];
+}

@@ -1,0 +1,75 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+
+\title{Advanced Network Security: Assignment \#1}
+\author{Hossein Afkar}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+\section{Q1}
+By assuming $H(x)$ as a collision resistant function, the following
+propositions are also assumed:
+\begin{itemize}
+    \item It is computationaly infeasable to find two objects that map to the
+        same hash result.
+\end{itemize}
+For every hash value $h = H(x)$, $x$ is a preimage of $h$.
+$H$ function takes $b$ number of bytes and output $n$ bytes of hash and we
+also know that $b > n$. So each hash value corresponds to $2^{b-n}$ preimages.
+For $H$ to be collison resistant this value should be large enough to make it
+computationaly infeasable. So the conclusion of the clause presented in the
+question is false and it is not required for this statement to be true in
+order for a hash function to be collision resistant.
+\section{Q2}
+Let $C_i$ be the probability of an event in which the \textit{i}th entry
+collides with the previous ones. Also let $q$ be the number of the events
+happening in the system (Number of calculated hashes) and $N$ be the number of
+bins (Number of all the hashes $2^n$). There are two ways to approach this
+question. First:
+\begin{equation}
+    C(N,q) = Pr[C_1 \vee C_2 \vee ... \vee C_q] \le Pr[C_1] + Pr[C_2] + ... + 
+    Pr[C_q] \le \frac{0}{N} + \frac{1}{N} + ... + \frac{q-1}{N}
+\end{equation}
+\begin{equation}
+    C(N,Q) \le \frac{q(q-1)}{2N}
+\end{equation}
+We need this probabilty to be 1.
+\begin{equation}
+    1 \le \frac{q(q-1)}{2N} \implies 1 \le \frac{q^2 - q}{2N} \implies 2N \le
+    q^2 - q \le q^2 \implies 2N \le q^2 \implies \sqrt{2N} \le q
+\end{equation}
+This implies that for every q that is larger than $2 \times 2^n$ this will
+definitely happen.
+Secondly we can walk backwards and calculate the probability for this event
+not happening.
+\begin{equation}
+    1 - C(N,q) = Pr[D_q] = Pr[D_q|D_{q-1}] \cdot Pr[D_{q-1}] = \sum_{i=1}^{q-1}Pr[D_{i+1}|D_i] = \sum_{i=1}^{q-1}(1-\frac{i}{N})
+\end{equation}
+Using the assumption $x = 1 + e^x$ we can deduce that:
+\begin{equation}
+    \sum_{i=1}^{q-1}e^{\frac{-i}{N}} = e^{\frac{-1}{N} - \frac{-2}{N} ...
+    \frac{q-1}{N}} = e^{\frac{-q(q-1)}{2N}}
+\end{equation}
+Then we will get:
+\begin{equation}
+    C(N,q) = 1 - e^{\frac{-q(q-1)}{2N}} = \frac{q(q-1)}{2N}
+\end{equation}
+Which is similar to what we got from the first approach.
+\section{Q3}
+\end{document}
