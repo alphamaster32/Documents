@@ -1,0 +1,134 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+
+\title{Advanced Network Security: Assignment \#2}
+\author{Hossein Afkar \\ 810101102}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+\section{Q1}
+Because of definition of $\equiv$ we have $a \equiv b (mod) c$: that
+$\forall d \in Z$ we have $a = dc + b$
+For $H(m) \equiv xr + sk (mod p - 1)$ we can also find a d that:
+\begin{equation}
+    H(m) = xr + sk + (p-1)d
+\end{equation}
+Fermat's little theorem that we had from previous assignment proves that
+for $p$ and $g \stackrel{p}{\equiv} 0$ we have
+$g^{p-1} \stackrel{p}{\equiv} 1$.
+Using that we can formally prove the signature scheme. From the signature
+generation in ElFamal we can derive that:
+\begin{equation}
+    g^{H(m)} \equiv g^{xr + sk + (p-1)d}
+\end{equation}
+Fermat's little theorem can be used here to eliminate $(g^{p-1})^d$
+\begin{equation}
+    \equiv (g^{x})^{r} (g^{k})^s (g^{p-1})^{d}
+\end{equation}
+\begin{equation}
+    \equiv (g^{x})^{r} (g^{k})^s 1^d
+\end{equation}
+\begin{equation}
+    \equiv (g^{x})^{r} (g^{k})^s
+\end{equation}
+\begin{equation}
+    \equiv y^{r} r^s
+\end{equation}
+\section{Q2}
+For RSA we have to choose two prime numbers $p$ and $q$
+and then compute the $n = pq$. After picking an encryption key $e \in
+Z_{n^\prime}$ we have message as $m: c = m^e$ and decryption as $c: m = c^d$.
+\\
+Our thesis is:
+\begin{equation}
+    (m^e)^d \stackrel{n}{\equiv} m, \text{ for all } m \in Z_{n}
+\end{equation}
+Chinese remainder thereom states that if $gcd(p,q)=1$.
+\begin{equation}
+    x = y \pmod p \land x = y \pmod q \Rightarrow x = y \pmod{pq}
+\end{equation}
+So if can prove that the following two statements are correct we have proved
+the theorem:
+\begin{equation}
+    (m^e)^d = m \mod p
+\end{equation}
+\begin{equation}
+    (m^e)^d = m \mod q
+\end{equation}
+Because $gcd(m,n) \neq 1$, one of $gcd(m,n) = p$ or $gcd(m,n) = q$ must be
+true. we start with $gcd(m,n) = p$. \\
+So if $gcd(m,n) = p$ then we have $m = kp$ which measns that $m \mod p = 0$.
+\begin{equation}
+    (m^e)^d = ((kp)^e)^d
+\end{equation}
+So equation (9) is proved to be correct.
+For equation (10) we have the following as stated in fermat's little theorem:
+\begin{equation}
+    m^{q-1} = 1 \mod q
+\end{equation}
+So using this we can continue with (10).
+\begin{equation}
+    \begin{aligned}
+        (m^{e})^d &= m^{ed} \\
+                  &= m^{ed - 1}m\\
+                  &= m^{h(p-1)(q-1)}m\\
+                  &= (m^{q-1})^{h(p-1)}m\\
+                  &= 1^{h(p-1)}m = m \bmod{q}.
+    \end{aligned}
+\end{equation}
+Which prooves that the second equation and therefore our whole theorem is
+correct and RSA works when $gcd(m,n) \neq 1$.
+\section{Q3}
+\subsection{a}
+False-accept happens when the user does not have the required privilages but
+is granted access to the resource. \\
+Flase-reject happens when the user does have access to the required privilages
+but is denied access to the resource.
+\subsection{b}
+So we need the probability of the false-reject to happen at least 5 times.
+\begin{equation}
+    p(\text{false-reject } \times 5) = (0.1) ^ 5
+\end{equation}
+\subsection{c}
+So if we get access the first time the probability is 0.005 or 0.5\%.
+For the second time we need to be rejected first and get access in the second
+try.
+\begin{equation}
+    p(\text{false-accept in second try}) = (1 - 0.005) \times 0.005 = 0.004975
+\end{equation}
+So the probability decreases for the second time. For the third time we have.
+\begin{equation}
+    p(\text{false-accept in third try}) = (1 - 0.005) \times (1 - 0.005)
+    \times 0.005 = 0.004950
+\end{equation}
+Lets go straight into the fifth try.
+\begin{equation}
+    p(\text{false-accept in fifth try}) = (1 - 0.005)^4 \times 0.005 = 0.00490074
+\end{equation}
+So all of these probabilities can happen which means we can sum them up.
+Sum of all these probabilities is higher than the $(0.0490074 \times 5)$ because
+all of them are around the same value just some 0.0001 factors short of 0.005.
+\\
+So we can conclude that the probability is equal to 0.02450.
+Which is around 2\% which is very high for this kind of application.
+Either the admins must find another way to decrease the false-positive rates
+which are very dangerous or resort to the simple password authentication or
+RFID tag method that decreases the chances of false-positive compared to the
+biometric ones.
+\end{document}

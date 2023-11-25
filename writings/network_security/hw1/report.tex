@@ -16,7 +16,7 @@
 \addtolength{\topmargin}{-2pt}
 
 \title{Advanced Network Security: Assignment \#1}
-\author{Hossein Afkar}
+\author{Hossein Afkar \\ 810101102}
 %\date{}
 
 \begin{document}
@@ -72,4 +72,130 @@ Then we will get:
 \end{equation}
 Which is similar to what we got from the first approach.
 \section{Q3}
+According to the reference provided to us by the assignment description we
+have:
+\begin{equation}
+    \tag{Inclusion-Exclusion Principle}
+    {n \choose 1} \times (n-1)! - {n \choose 2}
+    \times (n-2)! + {n \choose 3} \times (n-3)! - ... {n \choose n}
+    \times (n - n)!
+\end{equation}
+We can expand this equation into:
+\begin{equation}
+    \frac{n!}{1!(n-1)!} \times (n-1)! - \frac{n!}{2!(n-2)!} \times (n-2)! +
+    ... - \frac{n!}{n!(n-n)!} \times (n-n)!
+\end{equation}
+This turn into:
+\begin{equation}
+    n! \times (1 - \frac{1}{2!} + \frac{1}{3!} - ...)
+\end{equation}
+Number of all permutations of a set that are equal in length is $n!$.
+Therefore for the possibility we have:
+\begin{equation}
+    1 - \frac{1}{2!} + \frac{1}{3!} - \frac{1}{4!} + ... \implies
+    0.6321205588285578
+\end{equation}
+Using a simple program in 10000 iterations proves that this series converges to
+approximately 0.63212.
+This implies that the possibility is larger than 60\% which is what this
+question wanted us to prove.
+\section{Q4}
+\subsection{a}
+There are $2^{n}!$ distinct mappings in our block cipher. There are $t$
+key-text mappings that are already present and we need to find a key that
+maps all correctly. There are $(2^{n} - t)!$ mappings to the $2^{n}$ plaintexts.
+We can state the following: 
+\begin{equation}
+    \frac{(2^n - t)!}{2^{n}!}
+\end{equation}
+So the probability of this not happening is:
+\begin{equation}
+    1 - \frac{(2^n - t)!}{2^{n}!}
+\end{equation}
+\subsection{b}
+We need to take into account the probability of the same thing happening twice.
+This means that our mapping space has $N - t^\prime$ objects left.
+\begin{equation}
+    1 - (\frac{(2^n - t)!}{2^{n}!} \times \frac{2^n - t - t^\prime}{(2^{n} -t)!})
+\end{equation}
+\begin{equation}
+    1 - \frac{(2^n - t - t^\prime)!}{2^{n}!}
+\end{equation}
+According to stalling there is a different answer:
+\begin{equation}
+    Pr(t^\prime \text{ additional fixed points}) = {N - t \choose t^\prime} \times
+    Pr(\text{no fixed points in } N - t - t^\prime)
+\end{equation}
+\begin{equation}
+    \frac{1}{(t^\prime)!} \times \sum_{k = 0}^{N - t - t^\prime}\frac{-1^{k}}{k!} \implies 1 - \frac{1}{(N - t)!}
+\end{equation}
+This brings us back to the same equation but with less precision which is fine
+in large numbers that pass the birthday boundary.
+\section{Q5}
+\subsection{a}
+Function presented to us as $\phi(n)$ is the Euler's totient function.
+By definition $\phi(p) = p-1$ if $p$ is prime. Consider the set of all
+integers that are less than $pq$:
+\begin{equation}
+    \phi(pq) = {1, ..., (pq-1)}
+\end{equation}
+The integers in this set are relatively prime to $pq$. We know that $p$ and
+$q$ are prime numbers therefore we should quanitify the following:
+\begin{equation}
+    \{p, 2p, ..., (q-1)p\} , \{q, 2q, ... (p-1)q\}
+\end{equation}
+Then we can derive:
+\begin{equation}
+    \phi(n) = \phi(pq) = pq - 1 - [(q-1)+(p-1)] = pq - (p+q) + 1 = (p-1)(q-1)
+\end{equation}
+\subsection{b}
+Using dirichlet's proof of fermat's little theorem we assume that $a$ is
+positive and not divisible by $p$:
+\begin{equation}
+    a,2a,3a, ..., (p-1)a
+\end{equation}
+modulo of these series is:
+\begin{equation}
+    1, 2, 3, ..., p-1
+\end{equation}
+If we multiply the numbers together the result must be identical modulo of p:
+\begin{equation}
+    a \times 2a \times 3a \times ... \times (p-1)a \stackrel{q}{\equiv} 1
+    \times 2 \times 3 \times ... \times (p-1)
+\end{equation}
+\begin{equation}
+    a^{p-1}(p-1)! \stackrel{q}{\equiv} (p-1)!
+\end{equation}
+After removing $(p-1)!$ we have:
+\begin{equation}
+    a^{p-1} \stackrel{q}{\equiv} 1
+\end{equation}
+\subsection{c}
+First lets formulate the $n$ as $n = (p-1)q + r$ and $r$ as $ r = n - (p-1)q
+\implies n \mod (p-1)$
+Using the fermat's little theorem we have
+\begin{equation}
+    a^{p-1} \stackrel{p}{\equiv} 1
+\end{equation}
+Using the exponential rule in modular arithmetic we can assume:
+\begin{equation}
+    a^{(p-1) \times q} \stackrel{p}{\equiv} 1^{q}
+\end{equation}
+Now using the scaling rule in modular arithmetic we have:
+\begin{equation}
+    a^{(p-1) \times q} \times a^{r} \stackrel{p}{\equiv} 1^{q} \times a^{r}
+\end{equation}
+\begin{equation}
+    a^{(p-1) \times q + r} \stackrel{p}{\equiv} a^{r}
+\end{equation}
+\begin{equation}
+    a^{n} \stackrel{p}{\equiv} a^{n \mod (p-1)}
+\end{equation}
+\begin{equation}
+    a^{n} \stackrel{p}{\equiv} a^{n \mod \phi(p)}
+\end{equation}
+Therefore using the fermat's little theorem we reached the conclusion required
+for the assignment. Using this theory we can use smaller $n$ values. This is
+particulary helpful when we need to find prime numbers because smaller prime
+numbers are easier to find rather than large ones.
 \end{document}
