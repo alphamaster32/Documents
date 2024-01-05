@@ -1,0 +1,266 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{mathtools}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+
+\title{Advanced Network Security: Assignment \#3}
+\author{Hossein Afkar \\ 810101102}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+\section{Q1}
+\subsection{a}
+By referring to section 13.3 of Newman's book we can find out how
+this equation was derived. \\
+Suppose that we have $m$ as the number of edges. Given the fact that $p_k$ is
+the total fraction of vertices in the network with the degree k the total number
+of such vertices is $np_{k}$. Also, stubs are half-edges in the configuration model
+so according to Newman's book the probability of our edge ending at any
+particular vertex of degree $k$ is $\frac{k}{2m-1}$ which we can assume as
+$\frac{k}{2m}$. Therefore the probability of an edge attaching to
+any vertices with degree $k$ is:
+\begin{equation}
+    \frac{k}{2m} \times np_k = \frac{kp_k}{\langle k \rangle^{\prime}}
+\end{equation}
+Where $\langle k \rangle$ is the average degree over the whole network.
+There is proof that $2m = n \langle k \rangle$ in section 6 of the book. \\
+By multiplying this probability by $k$ and summing it over all of the vertices
+we have:
+\begin{equation}
+    \text{average degree of a neighbor} =
+    \sum_{k}k\frac{kp_k}{\langle k \rangle} =
+    \frac{\langle k^2 \rangle}{\langle k \rangle}
+\end{equation}
+We can calculate the probability distribution of the excess degree from the
+above equation. The probability $q_k$ of having excess degree $k$ is the
+probability of having total degree $k+1$ and putting $k \rightarrow k + 1$.
+So we get
+\begin{equation}
+    q_k = \frac{(k+1)p_{k+1}}{\langle k \rangle}
+\end{equation}
+According to the book, the denominator is still $\langle k \rangle$ because
+the equation is still normalized at infinity and converges to 1.
+\subsection{b}
+A degree-based approximation is often better than a fully-mixed model
+when analyzing networks because it takes into account the heterogeneity
+of node connections. In a fully-mixed model,
+all nodes are assumed to have the same average degree,
+which oversimplifies the real-world scenario
+where nodes can have varying degrees of connectivity.
+By using a degree-based approximation,
+we can capture the heterogeneity in node
+connectivity, which is crucial for understanding the
+the behavior of complex networks such as social networks, biological
+networks, and the World Wide Web. This approach allows us to better model
+the real-world structure of networks and make more accurate
+predictions about their behavior and dynamics.
+\subsection{c}
+One problem with the degree-based approximation in malware propagation,
+especially when compared to the fully mixed model, is that it may not capture
+the localized clustering and community structures present in real-world
+networks. So this makes this model susceptible to overestimation when one
+vertice has several neighbors.
+\section{Q2}
+\subsection{a}
+This question looks like the SIR model.
+According to page 55 of the malware slides the differential equations for
+The SIR model is presented as follows:
+\begin{equation}
+    \frac{ds}{dt} = -\beta sx
+\end{equation}
+\begin{equation}
+    \frac{dx}{dt} = \beta sx - \gamma x
+\end{equation}
+\begin{equation}
+    \frac{dr}{dt} = -\gamma x
+\end{equation}
+According to the question $\beta / n$ is 0.00002. we know that the $S = s / n$.
+And also we know that the recovery rate is $\gamma = 8 / 100$.
+so we can rewrite those equations easily. For this ODE we have:
+\begin{equation}
+    \frac{ds}{dt} = -0.00002Sx
+\end{equation}
+\begin{equation}
+    \frac{dx}{dt} = 0.00002Sx - 0.08x
+\end{equation}
+\begin{equation}
+    \frac{dr}{dt} = 0.08x
+\end{equation}
+Therefore we obtained the ODEs required for the SIR model and we also do not
+need to solve them.
+\subsection{b}
+So we need to calculate the $S$ or susceptibles at our arrival time.
+from equation number 7 we can get the number of $S$ if only we know how many
+infected nodes are there. There were 100 infected nodes at the time of our
+arrival and 8 recovered and 30 new infections happened. This means that the
+$x$ is now $100 - 8 + 30 = 122$.
+We know that 30 nodes are infected that means at the time of our arrival
+the steepness of the curve for $S$ is $-30$ which means that its derivation
+over time is $-30$. Now we have all the ingredients of the equation number 7
+that we can solve as a linear equation.
+\begin{equation}
+    \begin{aligned}
+        -30 &= -0.00002 \times S \times 122 \\
+        S &= \frac{-30}{122 \times -0.00002} \\
+        &= 12295.081 \approx 12296
+    \end{aligned}
+\end{equation}
+The approximation is pessimistic because we are not sure of the continued
+steepness of the curve so we can not be sure that this value will be seen.
+\subsection{c}
+According to Newman's book part 17.3, a person will stay infected for a mean
+value of $\frac{1}{\gamma}$.
+The probability of recovery is $\gamma dt$ so the probability of staying
+infected according to Newman's book is:
+\begin{equation}
+    \lim_{dt \rightarrow 0} (1 - \gamma dt)^{\frac{t}{dt}} = e^{-\gamma t}
+\end{equation}
+We can substitute the $e^{-\gamma t}$ with $(1 - \gamma)$ if the $t$ is too
+small.
+So we get the probability as $(1- \gamma)$ in any time segment.
+for the second time segment we have $\gamma(1- \gamma)$ as the probability of
+staying infected. In the second time segment, we have $\gamma(1-\gamma)^2$
+This equation can be salvaged as:
+\begin{equation}
+    \gamma(1-\gamma)^{t-1}
+\end{equation}
+The mean value according to the book on page 633 is $\frac{1}{\gamma}$ which
+is derived from the equation above. So for the answer, we have
+$\frac{1}{0.08} = 12.5$ time steps.
+\subsection{d}
+Climax happens when the $X$ value is at its highest which is equation number 8.
+the steepness at the climax is zero and the equation is of the second degree so
+we should have either a minimum or a maximum.
+\begin{equation}
+    \begin{aligned}
+        0 &= 0.00002 Sx - 0.08x \\
+        S &= \frac{0.08x}{0.00002x} \\
+          &= \frac{0.08}{0.00002} \\
+          &= 4000
+    \end{aligned}
+\end{equation}
+Because of the threshold phenomenon and the value of $\frac{\beta}{\gamma}$
+The climax value must be the maximum.
+\section{Q3}
+Using the SVM lecture of professor Winston we must maximize $\frac{2}{|w|}$ and
+minimize $\frac{1}{2}|w|^2$ which was derived from
+the street walk example. (For our sanity most of the steps are excluded) \\
+Also, the simplified equation governing the Lagrange one is
+$y_i(\bar{x_i}\bar{w} + b) - 1 = 0$.
+To solve the equation we need to change our working space from
+cartiesan to lagrangian.
+\begin{equation}
+    L = \frac{1}{2}|w|^2 - \sum\alpha[y_i(\bar{w}\bar{x_i} + b - 1]
+\end{equation}
+By derivating this equation by $w$ we get
+\begin{equation}
+    \frac{\partial L}{\partial \bar{w}} = \bar{w} - \sum_i \alpha_i y_i x_i = 0
+\end{equation}
+\begin{equation}
+    \bar{w} = \sum_i \alpha_i y_i x_i
+\end{equation}
+Another equation goes for the partial derivation of $b$.
+\begin{equation}
+    \frac{\partial L}{\partial b} = -\sum \alpha_i y_i = 0
+\end{equation}
+\begin{equation}
+    \sum \alpha_i y_i = 0
+\end{equation}
+By replacing the corresponding variables in the first Lagrange equation we get
+the last equation which is:
+\begin{equation}
+    L = \sum \alpha_i + \frac{1}{2} \sum_i \sum_j a_i a_j y_i y_j x_i \cdot x_j
+\end{equation}
+Now we can set to find the relative alphas for the SVM. Then we can find the
+$\bar{w}$
+\begin{equation}
+    x_{-} =  (0, 0)
+\end{equation}
+\begin{equation}
+    x_{+} = (2, 0)
+\end{equation}
+\begin{equation}
+    y_{-} = -1
+\end{equation}
+\begin{equation}
+    y_{+} = +1
+\end{equation}
+\begin{equation}
+    \sum \alpha_i y_i = 0 \rightarrow \alpha_1 - \alpha_2 = 0 \rightarrow \alpha_1 = \alpha_2
+\end{equation}
+Then we will use equation 19 which was the last derivation of the lecture
+to find the alphas
+\begin{multline}
+    L = 2 \alpha + \frac{1}{2}[((-1) \alpha^2 (0, 0) \cdot (0, 0)) + ((-1) \alpha^2 (0, 0) \cdot (2, 0)) + ((-1) \alpha^2 (2, 0) \cdot (0, 0)) ((-1) \alpha^2 (2, 0) \cdot (2, 0))] \\
+    = 2 \alpha + \frac{1}{2}[(-1) \alpha^2 \times [0 + 0 + 0 + 4]] \\
+    = 2 \alpha + -2 \alpha^2 \\
+    = 2 [\alpha - \alpha^2] \\
+\end{multline}
+Its derivation by $\alpha$ must be zero as professor Winstons stated
+(Back to 1801) because we are trying to maximize the vector values.
+\begin{equation}
+    \begin{aligned}
+        \frac{\partial L}{\partial \alpha} &= 0 \\
+                                           &= 2 [1 - 2 \alpha] = 0 \\
+                                           &\rightarrow \alpha = 0.5
+    \end{aligned}
+\end{equation}
+Now we can substitute the $\alpha$ value into equation 16 and get the $\bar{w}$.
+\begin{equation}
+    \begin{aligned}
+        \bar{w} &= \sum_i \alpha_i y_i x_i \\
+                &= (0.5 \times y_{-} x_{-}) + (0.5 \times y_{+} x_{+}) \\
+                &= (0.5 \times -1 (0, 0)) + (0.5 \times 1 \times (2, 0)) \\
+                &= (0, 0) + (1, 0)  \\
+                &= (1, 0)
+    \end{aligned}
+\end{equation}
+So the $\bar{w}$ is found to be (1, 0) which is the maximized street dividing
+the negative and positive sidewalk that is our negative and positive $x$
+values.
+\section{Q4}
+\subsection{a}
+Crowds work by making each node seem equally likely to be the initiator of
+the message. As we said each node joins the network by starting a Jondo
+(from "John Doe"), which is a small process that will forward and receive
+requests from other users. When the Jondo is started all nodes in the network
+are informed of the new node's entrance, and will begin to select him as a
+forwarder. To send a message a node chooses randomly
+(with uniform probability) from all nodes in the network and forwards
+the message to them which is like flipping a coin. (Extracted from Wikipedia) \\
+We can formulate probability for each forward like below:
+\begin{equation}
+    (1-p_f)+ (1-p_f)pf+ (1-p_f)p_f^2+ ..... +(1-p_f)p_f^{n}
+\end{equation}
+This looks like a geometric distribution in which we can find the formulas in
+the wikipedia.
+\begin{equation}
+    \frac{1}{1-pf}
+\end{equation}
+\subsection{b}
+This also follows the same equation as the previous subsection. We only need
+to factor in the probability that a node is infected ($\frac{n-c}{n}$).
+\begin{equation}
+    (1-p_f) + p_f\frac{n-c}{n}(1-p_f) + p_f^2 \frac{n-c}{n}(1-p_f) + ... + p_f^{n} \frac{n-c}{n} (1-p_f)
+\end{equation}
+We don't need to write the closed form of this equation which means the sum
+may be sufficient.
+\begin{equation}
+    \sum_{i=0}^{n} p_f^i \frac{n-c}{n} (1-pf) = (1-pf) \times \sum_{i=0}^{n} p_f^i \frac{n-c}{n}
+\end{equation}
+\end{document}

@@ -1,0 +1,153 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage[top=2cm, bottom=3cm, left = 2cm, right = 2cm]{geometry} 
+\geometry{a4paper} 
+\usepackage{textcomp}
+\usepackage{graphicx} 
+\usepackage{amsmath,amssymb}  
+\usepackage{bm}  
+\usepackage{memhfixc} 
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\pagestyle{fancy}
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-2pt}
+
+\title{Advanced Network Security: Research Assignment \#1}
+\author{Hossein Afkar \\ 810101102}
+%\date{}
+
+\begin{document}
+\maketitle
+% \tableofcontents
+\section{NIKE and NIKE+ Methods}
+NIKE and NIKE+ was constructed for smart power grids. The goal is to 
+secure the meters in the power grids o satisfy the confidentiality, integrity
+and availability constraints. In smart power grids the main focus is on
+security and processing overhead. \\
+According to the \cite{boyd1993limitation} and \cite{nessett1990critique}
+there are various examples that a BAN logic proved statement might not
+be totally attack free but in this research assignment we will try to
+see how that affects our BAN logic implementation of this protocol.
+NIKE+ is a protocol constructed by 5 steps.
+\begin{enumerate}
+    \item Meter chooses a random number $a$ and computes $A = a + r_{M}$.
+        Then it sends it with its $ID_M$ to the AHE.
+    \item After AHE got the message $T^{\prime}_M = AP$ is computed using $A$
+        and $P$ which is choosed during installation. Then $T_x = b + r_{AHE}$
+        and $T_{AHE} = T_xP$ is computed and via these inputs the key
+        $K_{AHE \rightarrow M} = T_x(T^{\prime}_M + H_2(ID_M, y_{AHE})P_{pub})$
+        is constructed then this key is hashed using
+        $H_1(0, K_{AHE \rightarrow M})$ as $M_1$ and sent with $T_{AHE}$ and $ID_{AHE}$
+        to the meter.
+    \item In step 3 the meter computes the key
+        $K_{M \rightarrow AHE} = (S_M + a)T_{AHE}$ and
+        $M^{\prime}_1 = H_1(0, K_{M \rightarrow AHE})$ If $M^{\prime}_1 = M_1$
+        then it authenticates AHE and sets the $K = H_1(ID_M || ID_{AHE} || K_{M \rightarrow AHE})$
+        as the key.
+    \item The meter computes $M_2 = H_1(1, K_{M \rightarrow AHE})$ and sends it
+        back to AHE.
+    \item AHE computes $M^{\prime}_2 = H_1(1, K_{AHE \rightarrow M})$
+        if $M^{\prime}_2 = M_2$ then it authenticates the meter and sets 
+        $K = H_1(ID_M || ID_{AHE}, K_{AHE \rightarrow M})$ as the session key.
+\end{enumerate}
+This operations basically removes the meter from the processing side of
+the authentication equation
+and therefore reduces the number of calculations needed by the meter which 
+makes it more suitable for embedded systems which are using small and 
+low power processors.
+\section{Task 1: BAN Logic}
+For starters lets rewrite the assumptions using a more literal BAN logic
+representation.
+\begin{enumerate}
+    \item M has publickey $R_M$ ($r_M$ is private)
+    \item AHE has publickey $R_{AHE}$ ($r_{AHE}$ is private)
+    \item TA has publickey $P_{pub}$ ($x$ is private)
+    \item M and AHE share secret key $y_{AHE}$ and $y_m$
+    \item M has jurisdiction over $a$
+    \item AHE has jurisdiction over $b$
+    \item M believes $a$ is fresh
+    \item AHE believes $b$ is fresh
+    \item M believes that AHE has jurisdiction over M and AHE sharing key $K$
+    \item AHE believes that M has jurisdiction over M and AHE sharing key $K$
+\end{enumerate}
+Security Goals to be proven:
+\begin{enumerate}
+    \item M believes that AHE and M are sharing key $K$
+    \item AHE believes that AHE and M are sharing key $K$
+    \item M believes that AHE believes that M and AHE are sharing the key $K$
+    \item AHE believes that M believes that M and AHE are sharing the key $K$
+\end{enumerate}
+In the step 2 of the protocol we see that key gets calculated and
+sent back to Meter for communication which is $k_{AHE \rightarrow M}$.
+We should prove that M believes that $k_{AHE \rightarrow M}$ and that key is
+fresh to continue.
+\begin{itemize}
+    \item M produced A and has jurisdiction over $a$.
+    \item M believes $a$ is fresh.
+    \item M has publickey $R_M$.
+    \item We can conclude that M sees $K_{AHE \rightarrow M}$.
+    \item If M sees $K_{AHE \rightarrow M}$ and M has the public key then
+        M believes that AHE believes that $K_{AHE \rightarrow M}$.
+    \item Then we need to believe that the $K_{AHE \rightarrow M}$ is
+        fresh therefore M must believe that b is fresh. because
+        b is encrypted using Public key share by AHE and M so also
+        B is fresh because B is $b + r_{AHE}$.
+    \item Now that M knows B and b is fresh and it knows that AHE also
+        believes b and B we have: M believes that B.
+    \item We know that B constructs $K_{AHE \rightarrow M}$ in the step 2 of
+        the protocol so we have: M believes that $K_{AHE \rightarrow M}$
+\end{itemize}
+Now we need to know if M believes the $T_{AHE}$ sent by the AHE.
+We can use forward chaining to achieve this.
+\begin{itemize}
+    \item $T_{AHE} = (b + r_{AHE}) P$
+    \item If M believes $K_{AHE \rightarrow M}$ then it also believes
+        $(b + r_{AHE})P$ because the components are the same. So M believes
+        $T_{AHE}$.
+    \item If M believes $T_{AHE}$ and M beliveves a and Also M knows its own
+        $S_{m}$ that is the private component of the meter shown in paper
+        as $S_i = y_i + r_i$. Then M believes all the components that construct
+        the key $K_{AHE \rightarrow M}$. Then we proved Goal number 1
+        which says M believes M and AHE are sharing key $K$.
+\end{itemize}
+Now lets work towards goal number 2.
+\begin{itemize}
+    \item Message $M_2$ is constructed by meter to be sent to the AHE.
+    \item The message constitutes of this: $H(0, K_{M \rightarrow AHE})$
+        and $T_{AHE}$ and $ID_{AHE}$.
+    \item Because of the shared public key between them AHE sees A and $y_m$
+        and $T_{AHE}$. Therefore AHE sees the key $K_{M \rightarrow AHE}$.
+    \item AHE shares secret key $y_m$ with M. and this key was used to encrypt
+        the message $M_2$. Therefore AHE believes M said $M_2$. If AHE sees
+        the key $K_{M \rightarrow AHE}$ then AHE can believe that M once said 
+        $K_{M \rightarrow AHE}$. If we can prove that this key is fresh
+        we can prove the goal number 2.
+    \item If we know that the inputs for key creation is fresh therefore the
+        key is fresh. AHE believes that $T_{AHE}$ and $A$ and $y_m$ is fresh.
+        Therefore we can say that AHE believes that the key is fresh.
+    \item Via this step we can say that AHE believes that M believes that
+        $K_{M \rightarrow AHE}$.
+    \item This assumption is same as AHE believes that M and AHE share the key
+        $K$.
+\end{itemize}
+For goal number 3 and 4 we have:
+\begin{itemize}
+    \item We know that M believes that AHE believes the $K_{M \rightarrow AHE}$
+        and AHE believes the same key and AHE believes that they share the key.
+        Therefore we can say that M believes that AHE believes that They share the
+        key $K$. Note that the Key $K$ is constructed from $K_{M \rightarrow AHE}$
+        and and $ID_M$ and $ID_{AHE}$. This is goal number 3.
+    \item AHE believes that M believes $K_{M \rightarrow AHE}$. Note that these
+        keys are the same because of the component $T_{AHE}$ and either side
+        can have these by knowing $T_{AHE}$ and some more components that both
+        parties already agree on. M also believes that $K_{M \rightarrow AHE}$.
+        and M knows they share the key constructed by $K_{M \rightarrow AHE}$.
+        Therefore AHE believes that M believes they share the same key $K$. This
+        is goal number 4.
+\end{itemize}
+\bibliographystyle{plain}
+\bibliography{ref.bib}
+\end{document}
